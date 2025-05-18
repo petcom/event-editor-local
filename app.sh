@@ -37,6 +37,7 @@ ROCKET="🚀"
 WRENCH="🔧"
 STOP_SIGN="🛑"
 GLOBE="🌐"
+INFO_MARK="ℹ️"
 
 # Function to display a stylized banner
 show_banner() {
@@ -77,10 +78,14 @@ show_usage() {
     echo "  ${CYAN}install${RESET}   ${ARROW_RIGHT} ${WRENCH} Install project dependencies"
     echo "  ${CYAN}start${RESET}     ${ARROW_RIGHT} ${ROCKET} Start the application in background"
     echo "  ${CYAN}stop${RESET}      ${ARROW_RIGHT} ${STOP_SIGN} Stop the running application"
+    echo "  ${CYAN}restart${RESET}   ${ARROW_RIGHT} ${ROCKET} Restart the application"
     echo "  ${CYAN}status${RESET}    ${ARROW_RIGHT} ${GLOBE} Show application status and URLs"
     echo "  ${CYAN}launch${RESET}    ${ARROW_RIGHT} ${GLOBE} Open the application in browser"
+    echo "  ${CYAN}help${RESET}      ${ARROW_RIGHT} ${INFO_MARK} Show detailed help information"
     echo
     echo "${BOLD}Example:${RESET} $0 ${CYAN}start${RESET}"
+    echo
+    echo "For more detailed help, run: $0 ${CYAN}help${RESET}"
 }
 
 #
@@ -167,19 +172,126 @@ app_stop() {
     app_exit 0
 }
 
+# Function to detect if running in WSL
+is_wsl() {
+    if grep -q Microsoft /proc/version 2>/dev/null; then
+        return 0  # Running in WSL
+    else
+        return 1  # Not running in WSL
+    fi
+}
+
+# Function to open URL in browser
+open_url() {
+    local url="$1"
+
+    if is_wsl; then
+        # WSL environment - use explorer.exe
+        echo "${YELLOW}${INFO_MARK} WSL detected, using explorer.exe to open URL${RESET}"
+        explorer.exe "$url" 2>/dev/null || show_error "Failed to open browser with explorer.exe"
+    elif command -v xdg-open >/dev/null 2>&1; then
+        # Linux with xdg-open
+        xdg-open "$url" 2>/dev/null || show_error "Failed to open browser with xdg-open"
+    elif command -v open >/dev/null 2>&1; then
+        # macOS
+        open "$url" 2>/dev/null || show_error "Failed to open browser with open"
+    elif command -v start >/dev/null 2>&1; then
+        # Windows
+        start "$url" 2>/dev/null || show_error "Failed to open browser with start"
+    else
+        show_error "Could not detect a way to open the browser. Please open manually at: $url"
+    fi
+}
+
 # Function to launch the application in browser
 app_launch() {
     app_start
 
     # Check if application is running
     if ! app_is_running; then
-        show_error "Application is not running. Please start it first."
+        echo "${YELLOW}${INFO_MARK} Application is not running. Starting it now...${RESET}"
+
+        # Start the application
+        echo "${YELLOW}${ROCKET} Starting application...${RESET}"
+        npm start > /dev/null 2>&1 &
+        echo $! > "$PID_FILE"
+        show_success "Application started. PID: $(cat "$PID_FILE")"
+
+        # Give the app a moment to initialize
+        sleep 2
     fi
 
     echo "${YELLOW}${GLOBE} Opening browser...${RESET}"
-    open_browser
 
-    show_success "Browser launched"
+    # Try to launch Electron directly if available
+    if [ -f "./node_modules/.bin/electron" ]; then
+        echo "${YELLOW}${INFO_MARK} Using Electron to launch the application${RESET}"
+        ./node_modules/.bin/electron . > /dev/null 2>&1 &
+    else
+        # Fall back to opening URL in browser
+        open_url "http://localhost:3000"
+    fi
+
+    show_success "Application launched"
+
+    app_exit 0
+}
+
+# Function to show detailed help
+app_help() {
+    app_start
+
+    show_banner "Event Editor Management App - Help"
+
+    echo "${BOLD}DESCRIPTION:${RESET}"
+    echo "  This script provides a convenient way to manage the Event Editor application."
+    echo "  It allows you to install dependencies, start/stop the application, check status,"
+    echo "  and open the application in a browser."
+    echo
+
+    echo "${BOLD}USAGE:${RESET}"
+    echo "  $0 ${CYAN}<command>${RESET}"
+    echo
+
+    echo "${BOLD}COMMANDS:${RESET}"
+    echo "  ${CYAN}install${RESET}   ${ARROW_RIGHT} ${WRENCH} Install project dependencies"
+    echo "  ${CYAN}start${RESET}     ${ARROW_RIGHT} ${ROCKET} Start the application in background"
+    echo "  ${CYAN}stop${RESET}      ${ARROW_RIGHT} ${STOP_SIGN} Stop the running application"
+    echo "  ${CYAN}restart${RESET}   ${ARROW_RIGHT} ${ROCKET} Restart the application"
+    echo "  ${CYAN}status${RESET}    ${ARROW_RIGHT} ${GLOBE} Show application status and URLs"
+    echo "  ${CYAN}launch${RESET}    ${ARROW_RIGHT} ${GLOBE} Open the application in browser (starts app if needed)"
+    echo "  ${CYAN}help${RESET}      ${ARROW_RIGHT} ${INFO_MARK} Show this detailed help message"
+    echo
+
+    echo "${BOLD}EXAMPLES:${RESET}"
+    echo "  ${GRAY}# Install dependencies${RESET}"
+    echo "  $0 install"
+    echo
+    echo "  ${GRAY}# Start the application${RESET}"
+    echo "  $0 start"
+    echo
+    echo "  ${GRAY}# Check application status${RESET}"
+    echo "  $0 status"
+    echo
+    echo "  ${GRAY}# Restart the application${RESET}"
+    echo "  $0 restart"
+    echo
+    echo "  ${GRAY}# Open in browser (starts app if needed)${RESET}"
+    echo "  $0 launch"
+    echo
+
+    # Show WSL-specific information if applicable
+    if is_wsl; then
+        echo "${BOLD}WSL ENVIRONMENT:${RESET}"
+        echo "  This script has detected that you are running in Windows Subsystem for Linux (WSL)."
+        echo "  The ${CYAN}launch${RESET} command will:"
+        echo "  1. First try to use Electron directly if available"
+        echo "  2. Otherwise use explorer.exe to open the URL in your Windows browser"
+        echo
+        echo "  You can also access the application directly in your Windows browser at:"
+        echo "  ${BOLD}${BLUE}http://localhost:3000${RESET}"
+        echo
+    fi
 
     app_exit 0
 }
@@ -203,6 +315,46 @@ app_status() {
     echo "${CYAN}${GLOBE} Available URLs:${RESET}"
     echo "${BOLD}${BLUE}http://localhost:3000${RESET} - Main application"
     echo "${BOLD}${BLUE}http://localhost:3000/events${RESET} - Events API"
+
+    # Show access instructions based on environment
+    echo
+    if is_wsl; then
+        echo "${CYAN}${INFO_MARK} WSL detected. You can access the application by:${RESET}"
+        echo "  1. Running ${BOLD}./app.sh launch${RESET} (uses explorer.exe)"
+        echo "  2. Opening ${BOLD}http://localhost:3000${RESET} in your Windows browser"
+        if [ -f "./node_modules/.bin/electron" ]; then
+            echo "  3. Running ${BOLD}./node_modules/.bin/electron .${RESET} directly"
+        fi
+    else
+        echo "${CYAN}${INFO_MARK} You can access the application by running:${RESET}"
+        echo "  ${BOLD}./app.sh launch${RESET}"
+    fi
+
+    app_exit 0
+}
+
+# Function to restart the application
+app_restart() {
+    app_start
+
+    echo "${YELLOW}${ROCKET} Restarting application...${RESET}"
+
+    # Stop the application if it's running
+    if app_is_running; then
+        PID=$(app_get_pid)
+        echo "${YELLOW}${STOP_SIGN} Stopping application... PID: $PID${RESET}"
+        kill $PID 2>/dev/null
+        rm "$PID_FILE"
+        echo "${GREEN}${CHECK_MARK} Application stopped${RESET}"
+    else
+        echo "${YELLOW}${INFO_MARK} Application was not running${RESET}"
+    fi
+
+    # Start the application
+    echo "${YELLOW}${ROCKET} Starting application...${RESET}"
+    npm start > /dev/null 2>&1 &
+    echo $! > "$PID_FILE"
+    show_success "Application restarted. PID: $(cat "$PID_FILE")"
 
     app_exit 0
 }
@@ -239,11 +391,17 @@ case "$COMMAND" in
     stop)
         app_stop "$@"
         ;;
+    restart)
+        app_restart "$@"
+        ;;
     status)
         app_status "$@"
         ;;
     launch)
         app_launch "$@"
+        ;;
+    help)
+        app_help "$@"
         ;;
     *)
         app_usage
