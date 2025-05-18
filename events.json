@@ -6,7 +6,10 @@
     "long_description": "Full details of the event.",
     "event_date": "2025-06-01",
     "display_from_date": "2025-05-15",
-    "tags": ["music", "wellness"],
+    "tags": [
+      "music",
+      "wellness"
+    ],
     "full_image_url": "none",
     "small_image_url": "none",
     "thumb_url": "none",
@@ -19,10 +22,13 @@
     "long_description": "Full details of the event.",
     "event_date": "2025-06-01",
     "display_from_date": "2025-05-15",
-    "tags": ["music", "wellness"],
-    "full_image_url": "none",
-    "small_image_url": "none",
-    "thumb_url": "none",
+    "tags": [
+      "music",
+      "wellness"
+    ],
+    "full_image_url": "/Users/adam/gitrepos/event-editor/images/full/20250518-2-bfec28ad-209f-4b14-a079-607e6eca3d08.png",
+    "small_image_url": "/Users/adam/gitrepos/event-editor/images/small/20250518-2-bfec28ad-209f-4b14-a079-607e6eca3d08.png",
+    "thumb_url": "/Users/adam/gitrepos/event-editor/images/thumb/20250518-2-bfec28ad-209f-4b14-a079-607e6eca3d08.png",
     "group_id": "alpha"
   },
   {
@@ -32,11 +38,13 @@
     "long_description": "Full details of the event.",
     "event_date": "2025-06-01",
     "display_from_date": "2025-05-15",
-    "tags": ["music", "wellness"],
+    "tags": [
+      "music",
+      "wellness"
+    ],
     "full_image_url": "none",
     "small_image_url": "none",
     "thumb_url": "none",
     "group_id": "alpha"
-    }
+  }
 ]
-

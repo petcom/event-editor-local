@@ -15,6 +15,18 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
 });
 
+document.getElementById('uploadImageBtn').addEventListener('click', async () => {
+  const eventToken = document.getElementById('id').value || 'untagged';
+
+  const result = await window.api.selectAndProcessImage(eventToken);
+
+  if (result) {
+    document.getElementById('full_image_url').value = result.full;
+    document.getElementById('small_image_url').value = result.small;
+    document.getElementById('thumb_url').value = result.thumb;
+  }
+});
+
 function renderEventList() {
   const list = document.getElementById('eventList');
   list.innerHTML = '';
@@ -41,7 +53,7 @@ function loadEventToForm(index) {
   document.getElementById('group_id').value = evt.group_id;
 }
 
-function saveEvent() {
+async function saveEvent() {
   const id = document.getElementById('id').value;
   const index = events.findIndex(e => e.id === id);
   if (index === -1) return;
@@ -60,5 +72,15 @@ function saveEvent() {
     group_id: document.getElementById('group_id').value
   };
 
-  renderEventList();
+  try {
+    const result = await window.api.saveEvents(events);
+    if (result.success) {
+      renderEventList();
+    } else {
+      console.error('[RENDERER] Failed to save events:', result.error);
+    }
+  } catch (err) {
+    console.error('[RENDERER] Unexpected save error:', err);
+  }
 }
+
