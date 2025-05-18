@@ -71,8 +71,10 @@ Available commands:
 | `install` | Install project dependencies |
 | `start` | Start the application in background |
 | `stop` | Stop the running application |
+| `restart` | Restart the application |
 | `status` | Show application status and URLs |
-| `launch` | Open the application in browser |
+| `launch` | Open the application in browser (starts app if needed) |
+| `help` | Show detailed help information |
 
 Examples:
 
@@ -86,11 +88,17 @@ Examples:
 # Check application status and URLs
 ./app.sh status
 
-# Open the application in browser
+# Restart the application
+./app.sh restart
+
+# Open the application in browser (starts app if needed)
 ./app.sh launch
 
 # Stop the application
 ./app.sh stop
+
+# Show detailed help
+./app.sh help
 ```
 
 ## Dependencies

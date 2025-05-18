@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Manager</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="inc/css/events.css">
+</head>
+<body class="list-view-active">
+  <div>
+  <h1>Event List</h1>
+
+  <div class="view-controls">
+    <div class="view-toggle">
+      <button id="listViewBtn" class="view-btn active">List</button>
+      <button id="thumbnailViewBtn" class="view-btn">Thumbnails</button>
+      <button id="detailsViewBtn" class="view-btn">Details</button>
+    </div>
+    <div class="size-control">
+      <span>Size:</span>
+      <input type="range" id="sizeSlider" min="16" max="256" value="40" class="slider">
+    </div>
+  </div>
+
+  <button id="createEventBtn">+ Create New Event</button>
+
+  <div id="eventListContainer">
+    <ul id="eventList" class="list-view"></ul>
+    <div id="eventGrid" class="thumbnail-view"></div>
+    <div id="eventDetails" class="details-view"></div>
+  </div>
+</div>
+
+<!-- Modal Overlay -->
+<div id="eventModal" class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2 class="modal-title">Edit Event</h2>
+      <button class="modal-close" id="closeModal">&times;</button>
+    </div>
+
+    <form id="eventForm">
+      <label>ID: <input type="text" id="id" readonly /></label><br />
+      <label>Title: <input type="text" id="title" /></label><br />
+      <label>Description: <input type="text" id="description" /></label><br />
+      <label>Long Description: <textarea id="long_description"></textarea></label><br />
+      <div class="date-fields-container">
+        <label>Event Date: <input type="date" id="event_date" /></label>
+        <label>Display From Date: <input type="date" id="display_from_date" /></label>
+      </div>
+      <label>Tags (comma-separated): <input type="text" id="tags" /></label><br />
+      <label>Full Image URL: <input type="text" id="full_image_url" /></label><br />
+      <label>Small Image URL: <input type="text" id="small_image_url" /></label><br />
+      <label>Thumbnail URL: <input type="text" id="thumb_url" /></label><br />
+      <label>Group ID: <input type="text" id="group_id" /></label><br />
+
+      <div class="modal-footer">
+        <button id="uploadImageBtn" type="button">Add Image</button>
+        <button id="deleteEventBtn" type="button" style="background-color: red; color: white;">Delete Event</button>
+        <button id="addEventBtn" type="button">New Event</button>
+        <button type="submit">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <script src="inc/js/renderer.js"></script>
+</body>
+</html>
