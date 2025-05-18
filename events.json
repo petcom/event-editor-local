@@ -46,5 +46,55 @@
     "small_image_url": "none",
     "thumb_url": "none",
     "group_id": "alpha"
+  },
+  {
+    "id": "[object Promise]-001",
+    "title": "test event 11",
+    "description": "test event 11 deac",
+    "long_description": "asdfasdf",
+    "event_date": "2025-05-24",
+    "display_from_date": "2025-05-25",
+    "tags": [
+      "sonar",
+      "me",
+      "you",
+      "beefy"
+    ],
+    "full_image_url": "",
+    "small_image_url": "",
+    "thumb_url": "",
+    "group_id": "45"
+  },
+  {
+    "id": "",
+    "title": "",
+    "description": "",
+    "long_description": "",
+    "event_date": "",
+    "display_from_date": "",
+    "tags": [
+      ""
+    ],
+    "full_image_url": "",
+    "small_image_url": "",
+    "thumb_url": "",
+    "group_id": ""
+  },
+  {
+    "id": "20250518-F325-001",
+    "title": "asdf",
+    "description": "kfles",
+    "long_description": "test long desc",
+    "event_date": "2025-05-20",
+    "display_from_date": "2025-05-15",
+    "tags": [
+      "comment",
+      "sonar",
+      "test"
+    ],
+    "full_image_url": "",
+    "small_image_url": "",
+    "thumb_url": "",
+    "group_id": "11"
   }
 ]

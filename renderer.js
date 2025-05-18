@@ -1,3 +1,6 @@
+console.log('[DEBUG] renderer.js loaded');
+console.log('[DEBUG] window.api:', window.api);
+
 let events = [];
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -91,6 +94,8 @@ async function saveEvent() {
 
 
 function clearFormWithId(newId) {
+  console.log('[DEBUG] Generated new event ID:', newId);
+  
   document.getElementById('id').value = newId;
   document.getElementById('title').value = '';
   document.getElementById('description').value = '';
@@ -104,17 +109,16 @@ function clearFormWithId(newId) {
   document.getElementById('group_id').value = '';
 }
 
-function generateSequentialEventId() {
-  const prefix = window.api.generateTokenPrefix();
+async function generateSequentialEventId() {
+  const prefix = await window.api.generateTokenPrefix();
   const todayEvents = events.filter(e => e.id && e.id.startsWith(prefix));
   const count = todayEvents.length + 1;
   return `${prefix}-${String(count).padStart(3, '0')}`;
 }
 
 
-
-document.getElementById('addEventBtn').addEventListener('click', () => {
-  const newId = generateSequentialEventId();
+document.getElementById('addEventBtn').addEventListener('click', async () => {
+  const newId = await generateSequentialEventId();   // ✅ await here
   clearFormWithId(newId);
 });
 
