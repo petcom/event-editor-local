@@ -56,9 +56,8 @@ function loadEventToForm(index) {
 async function saveEvent() {
   const id = document.getElementById('id').value;
   const index = events.findIndex(e => e.id === id);
-  if (index === -1) return;
 
-  events[index] = {
+  const newEvent = {
     id,
     title: document.getElementById('title').value,
     description: document.getElementById('description').value,
@@ -72,6 +71,12 @@ async function saveEvent() {
     group_id: document.getElementById('group_id').value
   };
 
+  if (index === -1) {
+    events.push(newEvent);
+  } else {
+    events[index] = newEvent;
+  }
+
   try {
     const result = await window.api.saveEvents(events);
     if (result.success) {
@@ -83,4 +88,33 @@ async function saveEvent() {
     console.error('[RENDERER] Unexpected save error:', err);
   }
 }
+
+
+function clearFormWithId(newId) {
+  document.getElementById('id').value = newId;
+  document.getElementById('title').value = '';
+  document.getElementById('description').value = '';
+  document.getElementById('long_description').value = '';
+  document.getElementById('event_date').value = '';
+  document.getElementById('display_from_date').value = '';
+  document.getElementById('tags').value = '';
+  document.getElementById('full_image_url').value = '';
+  document.getElementById('small_image_url').value = '';
+  document.getElementById('thumb_url').value = '';
+  document.getElementById('group_id').value = '';
+}
+
+function generateSequentialEventId() {
+  const prefix = window.api.generateTokenPrefix();
+  const todayEvents = events.filter(e => e.id && e.id.startsWith(prefix));
+  const count = todayEvents.length + 1;
+  return `${prefix}-${String(count).padStart(3, '0')}`;
+}
+
+
+
+document.getElementById('addEventBtn').addEventListener('click', () => {
+  const newId = generateSequentialEventId();
+  clearFormWithId(newId);
+});
 
