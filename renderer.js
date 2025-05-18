@@ -11,23 +11,36 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load events:', err);
   }
 
+  // Submit handler
   const form = document.getElementById('eventForm');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     saveEvent();
   });
-});
 
-document.getElementById('uploadImageBtn').addEventListener('click', async () => {
-  const eventToken = document.getElementById('id').value || 'untagged';
+  // Delete event button
+  document.getElementById('deleteEventBtn').addEventListener('click', () => {
+    console.log('[DEBUG] Delete button clicked');
+    deleteEvent();
+  });
 
-  const result = await window.api.selectAndProcessImage(eventToken);
+  // Upload image button
+  document.getElementById('uploadImageBtn').addEventListener('click', async () => {
+    const eventToken = document.getElementById('id').value || 'untagged';
+    const result = await window.api.selectAndProcessImage(eventToken);
 
-  if (result) {
-    document.getElementById('full_image_url').value = result.full;
-    document.getElementById('small_image_url').value = result.small;
-    document.getElementById('thumb_url').value = result.thumb;
-  }
+    if (result) {
+      document.getElementById('full_image_url').value = result.full;
+      document.getElementById('small_image_url').value = result.small;
+      document.getElementById('thumb_url').value = result.thumb;
+    }
+  });
+
+  // Add new event button
+  document.getElementById('addEventBtn').addEventListener('click', async () => {
+    const newId = await generateSequentialEventId();
+    clearFormWithId(newId);
+  });
 });
 
 function renderEventList() {
@@ -92,10 +105,9 @@ async function saveEvent() {
   }
 }
 
-
 function clearFormWithId(newId) {
   console.log('[DEBUG] Generated new event ID:', newId);
-  
+
   document.getElementById('id').value = newId;
   document.getElementById('title').value = '';
   document.getElementById('description').value = '';
@@ -116,9 +128,31 @@ async function generateSequentialEventId() {
   return `${prefix}-${String(count).padStart(3, '0')}`;
 }
 
+async function deleteEvent() {
+  const id = document.getElementById('id').value;
+  console.log('[DEBUG] Deleting event with ID:', id);
 
-document.getElementById('addEventBtn').addEventListener('click', async () => {
-  const newId = await generateSequentialEventId();   // ✅ await here
-  clearFormWithId(newId);
-});
+  const index = events.findIndex(e => e.id === id);
+  if (index === -1) {
+    console.warn('No matching event to delete');
+    return;
+  }
 
+  const confirmed = confirm(`Are you sure you want to delete event "${events[index].title}"?`);
+  if (!confirmed) return;
+
+  events.splice(index, 1); // remove from array
+
+  try {
+    const result = await window.api.saveEvents(events);
+    if (result.success) {
+      renderEventList();
+      clearFormWithId('');
+      console.log('[RENDERER] Event deleted');
+    } else {
+      console.error('[RENDERER] Failed to delete event:', result.error);
+    }
+  } catch (err) {
+    console.error('[RENDERER] Unexpected delete error:', err);
+  }
+}

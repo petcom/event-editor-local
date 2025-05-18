@@ -66,14 +66,14 @@
     "group_id": "45"
   },
   {
-    "id": "",
-    "title": "",
-    "description": "",
-    "long_description": "",
-    "event_date": "",
-    "display_from_date": "",
+    "id": "20250518-F325-002",
+    "title": "asdf",
+    "description": "asdf",
+    "long_description": "asdfasdf",
+    "event_date": "2025-05-22",
+    "display_from_date": "2025-05-23",
     "tags": [
-      ""
+      "adsf"
     ],
     "full_image_url": "",
     "small_image_url": "",
@@ -81,20 +81,20 @@
     "group_id": ""
   },
   {
-    "id": "20250518-F325-001",
+    "id": "20250518-F325-003",
     "title": "asdf",
-    "description": "kfles",
-    "long_description": "test long desc",
-    "event_date": "2025-05-20",
-    "display_from_date": "2025-05-15",
+    "description": "asdf",
+    "long_description": "asdfasdf",
+    "event_date": "2025-05-22",
+    "display_from_date": "2025-05-17",
     "tags": [
-      "comment",
-      "sonar",
-      "test"
+      "asdf",
+      "adsf",
+      "asdf"
     ],
     "full_image_url": "",
     "small_image_url": "",
     "thumb_url": "",
-    "group_id": "11"
+    "group_id": "1"
   }
 ]
