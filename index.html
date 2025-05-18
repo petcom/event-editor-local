@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Editor</title>
+  <meta charset="UTF-8" />
+</head>
+<body>
+   <h1>Hello, Electron!</h1>
+  
+  <div>
+<h1>Event List</h1>
+  <ul id="eventList"></ul>
+  </div>
+  <div>
+  <h2>Edit Event</h2>
+  <form id="eventForm">
+    <label>ID: <input type="text" id="id" readonly /></label><br />
+    <label>Title: <input type="text" id="title" /></label><br />
+    <label>Description: <input type="text" id="description" /></label><br />
+    <label>Long Description: <textarea id="long_description"></textarea></label><br />
+    <label>Event Date: <input type="date" id="event_date" /></label><br />
+    <label>Display From Date: <input type="date" id="display_from_date" /></label><br />
+    <label>Tags (comma-separated): <input type="text" id="tags" /></label><br />
+    <label>Full Image URL: <input type="text" id="full_image_url" /></label><br />
+    <label>Small Image URL: <input type="text" id="small_image_url" /></label><br />
+    <label>Thumbnail URL: <input type="text" id="thumb_url" /></label><br />
+    <label>Group ID: <input type="text" id="group_id" /></label><br />
+    <button type="submit">Save Changes</button>
+  </form>
+</div>
+  <script src="renderer.js"></script>
+</body>
+</html>

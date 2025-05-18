@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "title": "Test Event",
+    "description": "Short summary",
+    "long_description": "Full details of the event.",
+    "event_date": "2025-06-01",
+    "display_from_date": "2025-05-15",
+    "tags": ["music", "wellness"],
+    "full_image_url": "none",
+    "small_image_url": "none",
+    "thumb_url": "none",
+    "group_id": "alpha"
+  },
+  {
+    "id": "2",
+    "title": "Test Event 2",
+    "description": "Short summary",
+    "long_description": "Full details of the event.",
+    "event_date": "2025-06-01",
+    "display_from_date": "2025-05-15",
+    "tags": ["music", "wellness"],
+    "full_image_url": "none",
+    "small_image_url": "none",
+    "thumb_url": "none",
+    "group_id": "alpha"
+  },
+  {
+    "id": "3",
+    "title": "Test Event 3",
+    "description": "Short summary",
+    "long_description": "Full details of the event.",
+    "event_date": "2025-06-01",
+    "display_from_date": "2025-05-15",
+    "tags": ["music", "wellness"],
+    "full_image_url": "none",
+    "small_image_url": "none",
+    "thumb_url": "none",
+    "group_id": "alpha"
+    }
+]
+
