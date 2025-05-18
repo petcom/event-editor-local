@@ -81,20 +81,18 @@
     "group_id": ""
   },
   {
-    "id": "20250518-F325-003",
-    "title": "asdf",
-    "description": "asdf",
-    "long_description": "asdfasdf",
-    "event_date": "2025-05-22",
-    "display_from_date": "2025-05-17",
+    "id": "",
+    "title": "",
+    "description": "",
+    "long_description": "",
+    "event_date": "",
+    "display_from_date": "",
     "tags": [
-      "asdf",
-      "adsf",
-      "asdf"
+      ""
     ],
     "full_image_url": "",
     "small_image_url": "",
     "thumb_url": "",
-    "group_id": "1"
+    "group_id": ""
   }
 ]
