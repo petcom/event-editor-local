@@ -53,7 +53,7 @@ show_banner() {
     fi
 
     echo "${CYAN}╔══════════════════════════════════════════════════╗${RESET}"
-    echo "${CYAN}║${RESET}$left_padding${BOLD}${BLUE}$title${RESET}$right_padding${CYAN}║${RESET}"
+    echo "${CYAN}║${RESET}$left_padding${BOLD}${BLUE}$title${RESET}  $right_padding${CYAN}║${RESET}"
     echo "${CYAN}╚══════════════════════════════════════════════════╝${RESET}"
     echo
 }
@@ -77,6 +77,7 @@ show_usage() {
     echo "  ${CYAN}install${RESET}   ${ARROW_RIGHT} ${WRENCH} Install project dependencies"
     echo "  ${CYAN}start${RESET}     ${ARROW_RIGHT} ${ROCKET} Start the application in background"
     echo "  ${CYAN}stop${RESET}      ${ARROW_RIGHT} ${STOP_SIGN} Stop the running application"
+    echo "  ${CYAN}status${RESET}    ${ARROW_RIGHT} ${GLOBE} Show application status and URLs"
     echo "  ${CYAN}launch${RESET}    ${ARROW_RIGHT} ${GLOBE} Open the application in browser"
     echo
     echo "${BOLD}Example:${RESET} $0 ${CYAN}start${RESET}"
@@ -183,6 +184,29 @@ app_launch() {
     app_exit 0
 }
 
+# Function to show application status
+app_status() {
+    app_start
+
+    echo "${YELLOW}${ROCKET} Checking application status...${RESET}"
+
+    if ! app_is_running; then
+        echo "${YELLOW}${CROSS_MARK} Application is not running${RESET}"
+        app_exit 0
+    fi
+
+    PID=$(app_get_pid)
+    echo "${GREEN}${CHECK_MARK} Application is running. PID: ${BOLD}$PID${RESET}"
+
+    # Display URLs
+    echo
+    echo "${CYAN}${GLOBE} Available URLs:${RESET}"
+    echo "${BOLD}${BLUE}http://localhost:3000${RESET} - Main application"
+    echo "${BOLD}${BLUE}http://localhost:3000/events${RESET} - Events API"
+
+    app_exit 0
+}
+
 # Function to print usage and exit
 app_usage() {
     show_usage
@@ -214,6 +238,9 @@ case "$COMMAND" in
         ;;
     stop)
         app_stop "$@"
+        ;;
+    status)
+        app_status "$@"
         ;;
     launch)
         app_launch "$@"

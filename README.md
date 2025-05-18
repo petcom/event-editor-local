@@ -21,7 +21,8 @@ This application allows users to:
 ## Project Structure
 
 ```
-├── events.json          # Event data storage
+├── app.sh              # Management script for the application
+├── events.json         # Event data storage
 ├── images/             # Processed images directory
 │   ├── full/          # Full-size images
 │   ├── small/         # Small-size images
@@ -49,8 +50,47 @@ This application allows users to:
 
 ### Running the Application
 
+You can run the application using the management script:
+
 ```bash
-npm start
+./app.sh start
+```
+
+### Using the Management Script
+
+The `app.sh` script provides a convenient way to manage the application:
+
+```bash
+./app.sh <command>
+```
+
+Available commands:
+
+| Command | Description |
+|---------|-------------|
+| `install` | Install project dependencies |
+| `start` | Start the application in background |
+| `stop` | Stop the running application |
+| `status` | Show application status and URLs |
+| `launch` | Open the application in browser |
+
+Examples:
+
+```bash
+# Install dependencies
+./app.sh install
+
+# Start the application
+./app.sh start
+
+# Check application status and URLs
+./app.sh status
+
+# Open the application in browser
+./app.sh launch
+
+# Stop the application
+./app.sh stop
 ```
 
 ## Dependencies
@@ -59,14 +99,6 @@ npm start
 - @aws-sdk/client-s3: ^3.812.0
 - sharp: ^0.34.1
 - uuid: ^11.1.0
-
-## Documentation
-
-- Project documentation is stored in the `docs` directory
-- Agent history: `docs/AGENT-HISTORY.md`
-- Agent rules: `docs/AGENT-RULES.md`
-- Tasks: `docs/TASKS.md`
-- Architecture: `docs/ARCHITECTURE.md`
 
 ## License
 
