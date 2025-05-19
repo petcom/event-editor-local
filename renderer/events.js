@@ -80,7 +80,7 @@ export async function deleteEvent(events) {
 }
 
 export async function addNewEvent(events) {
-  const prefix = await generateTokenPrefix();
+  const prefix = await window.api.generateTokenPrefix();
   console.log('[EVENTS] Token prefix for new event:', prefix);
 
   const todayEvents = events.filter(e => e.id.startsWith(prefix));

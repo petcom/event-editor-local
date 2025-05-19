@@ -11,14 +11,14 @@ module.exports = function registerUtilityHandlers() {
       return false;
     }
   });
-
-  ipcMain.handle('append-to-log-file', async (event, filename, content) => {
-    const logPath = path.join(__dirname, filename);
-    try {
-      await fs.promises.appendFile(logPath, content);
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: err.message };
-    }
-  });
+  
+ipcMain.handle('append-to-log-file', async (event, filename, content) => {
+  const logPath = path.join(__dirname, filename);
+  try {
+    await fs.promises.appendFile(logPath, content);
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
 };

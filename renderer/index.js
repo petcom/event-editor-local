@@ -39,14 +39,22 @@ window.addEventListener('DOMContentLoaded', async () => {
     clearFormWithId('');
   });
 
-  document.getElementById('uploadImageBtn').addEventListener('click', async () => {
-    console.log('[DEBUG] Upload image button clicked');
+document.getElementById('uploadImageBtn').addEventListener('click', async () => {
+  console.log('[DEBUG] Upload image button clicked');
 
-    const eventToken = document.getElementById('eventToken').value;
-    await handleImageUpload(eventToken, events);
+  const input = document.getElementById('eventToken') || document.getElementById('id');
+  if (!input) {
+    console.error('[UPLOAD] Cannot find eventToken or id field in form');
+    return;
+  }
 
-    renderEventList(events, loadEventToForm); // Optional: refresh UI after upload
-  });
+  const eventToken = input.value;
+  console.log('[UPLOAD] Using token for image upload:', eventToken);
+
+  await handleImageUpload(eventToken, events);
+  renderEventList(events, loadEventToForm);
+});
+
 
   document.getElementById('addEventBtn').addEventListener('click', async () => {
     console.log('[DEBUG] Add New Event button clicked');
