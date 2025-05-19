@@ -147,9 +147,26 @@ app_start_server() {
     fi
 
     echo "${YELLOW}${ROCKET} Starting application...${RESET}"
-    npm start > /dev/null 2>&1 &
-    echo $! > "$PID_FILE"
-    show_success "Application started. PID: $(cat "$PID_FILE")"
+
+    # Create a log file for npm start output
+    NPM_LOG="/tmp/npm_start_$$.log"
+
+    # Start the application with output redirected to the log file
+    npm start > "$NPM_LOG" 2>&1 &
+    APP_PID=$!
+    echo $APP_PID > "$PID_FILE"
+
+    # Wait a moment to see if the application starts successfully
+    sleep 3
+
+    # Check if the process is still running
+    if ps -p $APP_PID > /dev/null 2>&1; then
+        show_success "Application started. PID: $APP_PID"
+    else
+        echo "${RED}${CROSS_MARK} Application failed to start. Check log at $NPM_LOG for details${RESET}"
+        rm -f "$PID_FILE"
+        exit 1
+    fi
 
     app_exit 0
 }
@@ -233,13 +250,34 @@ app_launch() {
     # as npm start already launched Electron
     if [ "$JUST_STARTED" = true ]; then
         echo "${YELLOW}${INFO_MARK} Application already launched by npm start${RESET}"
-    # If app was already running and Electron is available, launch Electron directly
+    # If app was already running and Electron is available, try to launch Electron directly
     elif [ -f "./node_modules/.bin/electron" ]; then
-        echo "${YELLOW}${INFO_MARK} Using Electron to launch the application${RESET}"
-        ./node_modules/.bin/electron . > /dev/null 2>&1 &
+        echo "${YELLOW}${INFO_MARK} Attempting to launch Electron directly...${RESET}"
+
+        # Create a temporary log file for Electron output
+        ELECTRON_LOG="/tmp/electron_launch_$$.log"
+
+        # Try to launch Electron with output redirected to the log file
+        ./node_modules/.bin/electron . > "$ELECTRON_LOG" 2>&1 &
+        ELECTRON_PID=$!
+
+        # Wait a moment to see if Electron starts successfully
+        sleep 3
+
+        # Check if Electron is still running
+        if ps -p $ELECTRON_PID > /dev/null 2>&1; then
+            echo "${GREEN}${CHECK_MARK} Electron launched successfully. PID: ${BOLD}$ELECTRON_PID${RESET}"
+        else
+            echo "${YELLOW}${CROSS_MARK} Electron failed to start. Falling back to browser.${RESET}"
+            echo "${YELLOW}${INFO_MARK} Check log at $ELECTRON_LOG for details${RESET}"
+
+            # Fall back to opening URL in browser
+            echo "${YELLOW}${INFO_MARK} Opening URL in browser instead${RESET}"
+            open_url "http://localhost:3000"
+        fi
     # Otherwise, fall back to opening URL in browser
     else
-        echo "${YELLOW}${INFO_MARK} Opening URL in browser${RESET}"
+        echo "${YELLOW}${INFO_MARK} Electron not found. Opening URL in browser${RESET}"
         open_url "http://localhost:3000"
     fi
 
@@ -364,9 +402,26 @@ app_restart() {
 
     # Start the application
     echo "${YELLOW}${ROCKET} Starting application...${RESET}"
-    npm start > /dev/null 2>&1 &
-    echo $! > "$PID_FILE"
-    show_success "Application restarted. PID: $(cat "$PID_FILE")"
+
+    # Create a log file for npm start output
+    NPM_LOG="/tmp/npm_restart_$$.log"
+
+    # Start the application with output redirected to the log file
+    npm start > "$NPM_LOG" 2>&1 &
+    APP_PID=$!
+    echo $APP_PID > "$PID_FILE"
+
+    # Wait a moment to see if the application starts successfully
+    sleep 3
+
+    # Check if the process is still running
+    if ps -p $APP_PID > /dev/null 2>&1; then
+        show_success "Application restarted. PID: $APP_PID"
+    else
+        echo "${RED}${CROSS_MARK} Application failed to restart. Check log at $NPM_LOG for details${RESET}"
+        rm -f "$PID_FILE"
+        exit 1
+    fi
 
     app_exit 0
 }
