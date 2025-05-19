@@ -207,6 +207,9 @@ open_url() {
 app_launch() {
     app_start
 
+    # Flag to track if we just started the app
+    JUST_STARTED=false
+
     # Check if application is running
     if ! app_is_running; then
         echo "${YELLOW}${INFO_MARK} Application is not running. Starting it now...${RESET}"
@@ -217,18 +220,26 @@ app_launch() {
         echo $! > "$PID_FILE"
         show_success "Application started. PID: $(cat "$PID_FILE")"
 
+        # Set flag that we just started the app
+        JUST_STARTED=true
+
         # Give the app a moment to initialize
         sleep 2
     fi
 
-    echo "${YELLOW}${GLOBE} Opening browser...${RESET}"
+    echo "${YELLOW}${GLOBE} Opening application...${RESET}"
 
-    # Try to launch Electron directly if available
-    if [ -f "./node_modules/.bin/electron" ]; then
+    # If we just started the app with npm start, don't do anything else
+    # as npm start already launched Electron
+    if [ "$JUST_STARTED" = true ]; then
+        echo "${YELLOW}${INFO_MARK} Application already launched by npm start${RESET}"
+    # If app was already running and Electron is available, launch Electron directly
+    elif [ -f "./node_modules/.bin/electron" ]; then
         echo "${YELLOW}${INFO_MARK} Using Electron to launch the application${RESET}"
         ./node_modules/.bin/electron . > /dev/null 2>&1 &
+    # Otherwise, fall back to opening URL in browser
     else
-        # Fall back to opening URL in browser
+        echo "${YELLOW}${INFO_MARK} Opening URL in browser${RESET}"
         open_url "http://localhost:3000"
     fi
 
@@ -285,8 +296,9 @@ app_help() {
         echo "${BOLD}WSL ENVIRONMENT:${RESET}"
         echo "  This script has detected that you are running in Windows Subsystem for Linux (WSL)."
         echo "  The ${CYAN}launch${RESET} command will:"
-        echo "  1. First try to use Electron directly if available"
-        echo "  2. Otherwise use explorer.exe to open the URL in your Windows browser"
+        echo "  1. Start the app if it's not running (this will launch Electron automatically)"
+        echo "  2. If the app was already running and Electron is available, launch Electron directly"
+        echo "  3. Otherwise use explorer.exe to open the URL in your Windows browser"
         echo
         echo "  You can also access the application directly in your Windows browser at:"
         echo "  ${BOLD}${BLUE}http://localhost:3000${RESET}"
@@ -320,7 +332,7 @@ app_status() {
     echo
     if is_wsl; then
         echo "${CYAN}${INFO_MARK} WSL detected. You can access the application by:${RESET}"
-        echo "  1. Running ${BOLD}./app.sh launch${RESET} (uses explorer.exe)"
+        echo "  1. Running ${BOLD}./app.sh launch${RESET}"
         echo "  2. Opening ${BOLD}http://localhost:3000${RESET} in your Windows browser"
         if [ -f "./node_modules/.bin/electron" ]; then
             echo "  3. Running ${BOLD}./node_modules/.bin/electron .${RESET} directly"

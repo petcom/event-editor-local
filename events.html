@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  <button id="createEventBtn">+ Create New Event</button>
+  <button id="createEventBtn">✨ Create New Event</button>
 
   <div id="eventListContainer">
     <ul id="eventList" class="list-view"></ul>
@@ -38,28 +38,95 @@
       <button class="modal-close" id="closeModal">&times;</button>
     </div>
 
-    <form id="eventForm">
-      <label>ID: <input type="text" id="id" readonly /></label><br />
-      <label>Title: <input type="text" id="title" /></label><br />
-      <label>Description: <input type="text" id="description" /></label><br />
-      <label>Long Description: <textarea id="long_description"></textarea></label><br />
-      <div class="date-fields-container">
-        <label>Event Date: <input type="date" id="event_date" /></label>
-        <label>Display From Date: <input type="date" id="display_from_date" /></label>
-      </div>
-      <label>Tags (comma-separated): <input type="text" id="tags" /></label><br />
-      <label>Full Image URL: <input type="text" id="full_image_url" /></label><br />
-      <label>Small Image URL: <input type="text" id="small_image_url" /></label><br />
-      <label>Thumbnail URL: <input type="text" id="thumb_url" /></label><br />
-      <label>Group ID: <input type="text" id="group_id" /></label><br />
+    <div class="modal-content">
+      <div class="form-layout">
+        <!-- Top section: Two columns -->
+        <div class="top-section">
+          <!-- Left column: ID, Title, Dates, Description -->
+          <div class="left-column">
+            <form id="eventForm">
+              <label>ID: <input type="text" id="id" readonly /></label>
+              <label>Title: <input type="text" id="title" /></label>
 
-      <div class="modal-footer">
-        <button id="uploadImageBtn" type="button">Add Image</button>
-        <button id="deleteEventBtn" type="button" style="background-color: red; color: white;">Delete Event</button>
-        <button id="addEventBtn" type="button">New Event</button>
-        <button type="submit">Save Changes</button>
+              <!-- Date fields moved up -->
+              <div class="date-fields-container">
+                <label>Event Date: <input type="date" id="event_date" /></label>
+                <label>Display From Date: <input type="date" id="display_from_date" /></label>
+              </div>
+
+              <label>Description: <textarea id="description"></textarea></label>
+
+              <!-- Hidden image URL fields (not visible to user but still part of the form) -->
+              <input type="hidden" id="full_image_url" />
+              <input type="hidden" id="small_image_url" />
+              <input type="hidden" id="thumb_url" />
+            </form>
+          </div>
+
+          <!-- Right column: Image preview -->
+          <div class="right-column">
+            <div class="image-field-container">
+              <label>Event Image:</label>
+              <div class="image-tabs-container">
+                <!-- Tabs navigation -->
+                <div class="image-tabs">
+                  <button id="previewTabBtn" class="image-tab-btn active">Preview</button>
+                  <button id="pathsTabBtn" class="image-tab-btn">Image Paths</button>
+                  <button id="uploadTabBtn" class="image-tab-btn">Add Image</button>
+                </div>
+
+                <!-- Tab content -->
+                <div class="image-tab-content">
+                  <!-- Preview tab -->
+                  <div id="previewTab" class="tab-pane active">
+                    <div class="image-preview">
+                      <img id="eventImagePreview" src="images/default.png" alt="Event image preview" onerror="handleImageError(this)">
+                      <div id="imageErrorMessage" class="image-error-message">Image failed to load</div>
+                    </div>
+                  </div>
+
+                  <!-- Image Paths tab -->
+                  <div id="pathsTab" class="tab-pane">
+                    <div class="image-paths">
+                      <div><strong>Full:</strong> <span id="fullImagePath">None</span></div>
+                      <div><strong>Small:</strong> <span id="smallImagePath">None</span></div>
+                      <div><strong>Thumb:</strong> <span id="thumbImagePath">None</span></div>
+                    </div>
+                  </div>
+
+                  <!-- Upload tab -->
+                  <div id="uploadTab" class="tab-pane">
+                    <div class="image-upload-area" id="imageUploadArea">
+                      <div class="upload-message">Drag image here or click to select</div>
+                      <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom section: Full width -->
+        <div class="bottom-section">
+          <!-- Long description (full width) -->
+          <label>Long Description: <textarea id="long_description"></textarea></label>
+
+          <!-- Tags and Group ID side by side -->
+          <div class="tags-group-container">
+            <label>Tags (comma-separated): <input type="text" id="tags" /></label>
+            <label>Group ID: <input type="text" id="group_id" /></label>
+          </div>
+        </div>
       </div>
-    </form>
+    </div>
+
+    <div class="modal-footer">
+      <button id="deleteEventBtn" type="button">🗑️ Delete Event</button>
+      <button id="cancelBtn" type="button" style="display: none;">❌ Cancel</button>
+      <button id="saveEventBtn" type="button">💾 Save Changes</button>
+      <button id="createBtn" type="button" style="display: none;">✨ Create Event</button>
+    </div>
   </div>
 </div>
 

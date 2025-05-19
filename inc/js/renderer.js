@@ -19,11 +19,20 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load events:', err);
   }
 
-  // Submit handler
-  const form = document.getElementById('eventForm');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
+  // Save event button handler
+  document.getElementById('saveEventBtn').addEventListener('click', () => {
     saveEvent();
+    closeModal();
+  });
+
+  // Create event button handler
+  document.getElementById('createBtn').addEventListener('click', () => {
+    saveEvent();
+    closeModal();
+  });
+
+  // Cancel button handler
+  document.getElementById('cancelBtn').addEventListener('click', () => {
     closeModal();
   });
 
@@ -34,23 +43,96 @@ window.addEventListener('DOMContentLoaded', async () => {
     closeModal();
   });
 
-  // Upload image button
-  document.getElementById('uploadImageBtn').addEventListener('click', async () => {
-    const eventToken = document.getElementById('id').value || 'untagged';
-    const result = await window.api.selectAndProcessImage(eventToken);
+  // Tab switching functionality
+  document.querySelectorAll('.image-tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all tabs
+      document.querySelectorAll('.image-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('active');
+      });
 
-    if (result) {
-      document.getElementById('full_image_url').value = result.full;
-      document.getElementById('small_image_url').value = result.small;
-      document.getElementById('thumb_url').value = result.thumb;
+      // Add active class to clicked tab
+      button.classList.add('active');
+
+      // Show corresponding tab content
+      const tabId = button.id.replace('Btn', '');
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
+
+  // Image upload functionality
+  const uploadArea = document.getElementById('imageUploadArea');
+  const fileInput = document.getElementById('imageFileInput');
+
+  // Click on upload area to trigger file input
+  uploadArea.addEventListener('click', () => {
+    fileInput.click();
+  });
+
+  // Handle file selection
+  fileInput.addEventListener('change', async (e) => {
+    if (e.target.files.length > 0) {
+      const eventToken = document.getElementById('id').value || 'untagged';
+      const result = await window.api.selectAndProcessImage(eventToken);
+
+      if (result) {
+        document.getElementById('full_image_url').value = result.full;
+        document.getElementById('small_image_url').value = result.small;
+        document.getElementById('thumb_url').value = result.thumb;
+
+        // Update the image preview
+        updateImagePreview(result.full);
+
+        // Update image paths display
+        updateImagePaths(result.full, result.small, result.thumb);
+
+        // Switch to preview tab
+        document.getElementById('previewTabBtn').click();
+      }
     }
   });
 
-  // Add new event button (inside modal)
-  document.getElementById('addEventBtn').addEventListener('click', async () => {
-    const newId = await generateSequentialEventId();
-    clearFormWithId(newId);
+  // Drag and drop functionality
+  uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('drag-over');
   });
+
+  uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('drag-over');
+  });
+
+  uploadArea.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+
+    if (e.dataTransfer.files.length > 0) {
+      const eventToken = document.getElementById('id').value || 'untagged';
+      const result = await window.api.selectAndProcessImage(eventToken);
+
+      if (result) {
+        document.getElementById('full_image_url').value = result.full;
+        document.getElementById('small_image_url').value = result.small;
+        document.getElementById('thumb_url').value = result.thumb;
+
+        // Update the image preview
+        updateImagePreview(result.full);
+
+        // Update image paths display
+        updateImagePaths(result.full, result.small, result.thumb);
+
+        // Switch to preview tab
+        document.getElementById('previewTabBtn').click();
+      }
+    }
+  });
+
+  // No longer needed - removed toggle fields button
+
+  // We've removed the "New Event" button from the modal
 
   // Create new event button (outside modal)
   document.getElementById('createEventBtn').addEventListener('click', async () => {
@@ -64,11 +146,37 @@ window.addEventListener('DOMContentLoaded', async () => {
     closeModal();
   });
 
-  // Close modal when clicking outside
-  document.getElementById('eventModal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('eventModal')) {
+  // Track if mousedown started on the overlay
+  let mouseDownOnOverlay = false;
+
+  // Prevent clicks on the modal container from propagating to the overlay
+  document.querySelector('.modal-container').addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+  });
+
+  // Set flag when mousedown occurs on overlay
+  document.getElementById('eventModal').addEventListener('mousedown', (e) => {
+    // Only set the flag if the click is directly on the overlay, not on any of its children
+    mouseDownOnOverlay = (e.target === document.getElementById('eventModal'));
+  });
+
+  // Close modal only if both mousedown and mouseup occurred on the overlay
+  document.getElementById('eventModal').addEventListener('mouseup', (e) => {
+    if (mouseDownOnOverlay && e.target === document.getElementById('eventModal')) {
       closeModal();
     }
+    // Reset the flag
+    mouseDownOnOverlay = false;
+  });
+
+  // Reset the flag if mouse leaves the window
+  window.addEventListener('mouseleave', () => {
+    mouseDownOnOverlay = false;
+  });
+
+  // Also reset the flag on any mouse movement over modal content
+  document.querySelector('.modal-container').addEventListener('mousemove', () => {
+    mouseDownOnOverlay = false;
   });
 
   // View toggle buttons
@@ -95,6 +203,16 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeModal();
+    }
+  });
+
+  // Update modal title when title field changes (for editing mode)
+  document.getElementById('title').addEventListener('input', (e) => {
+    const modalTitle = document.querySelector('.modal-title');
+    const isCreating = modalTitle.textContent === 'Create New Event';
+
+    if (!isCreating && document.getElementById('eventModal').classList.contains('active')) {
+      modalTitle.textContent = `Editing ${e.target.value}`;
     }
   });
 
@@ -309,9 +427,21 @@ function renderEventList() {
 function openModal(title) {
   const modal = document.getElementById('eventModal');
   const modalTitle = document.querySelector('.modal-title');
+  const isCreating = title === 'Create New Event';
+
+  // Set up buttons based on mode
+  document.getElementById('deleteEventBtn').style.display = isCreating ? 'none' : 'inline-flex';
+  document.getElementById('cancelBtn').style.display = isCreating ? 'inline-flex' : 'none';
+  document.getElementById('saveEventBtn').style.display = isCreating ? 'none' : 'inline-flex';
+  document.getElementById('createBtn').style.display = isCreating ? 'inline-flex' : 'none';
 
   // Set modal title
-  modalTitle.textContent = title;
+  if (isCreating) {
+    modalTitle.textContent = 'Create New Event';
+  } else {
+    const eventTitle = document.getElementById('title').value;
+    modalTitle.textContent = `Editing ${eventTitle}`;
+  }
 
   // Show modal
   modal.classList.add('active');
@@ -340,6 +470,60 @@ function loadEventToForm(index) {
   document.getElementById('small_image_url').value = evt.small_image_url;
   document.getElementById('thumb_url').value = evt.thumb_url;
   document.getElementById('group_id').value = evt.group_id;
+
+  // Update image preview - use full image for preview
+  updateImagePreview(evt.full_image_url);
+
+  // Update image paths display
+  updateImagePaths(evt.full_image_url, evt.small_image_url, evt.thumb_url);
+
+  // Update modal title if modal is open
+  if (document.getElementById('eventModal').classList.contains('active')) {
+    document.querySelector('.modal-title').textContent = `Editing ${evt.title}`;
+  }
+
+  // No longer needed - removed additional fields toggle
+
+  // Switch to preview tab by default
+  document.getElementById('previewTabBtn').click();
+
+  // Reset image preview element
+  const previewImg = document.getElementById('eventImagePreview');
+  previewImg.style.display = 'block';
+}
+
+// Function to update the image preview
+function updateImagePreview(imageUrl) {
+  const previewImg = document.getElementById('eventImagePreview');
+  const errorMessage = document.getElementById('imageErrorMessage');
+
+  // Hide error message initially
+  errorMessage.style.display = 'none';
+
+  if (imageUrl && imageUrl !== 'none' && imageUrl !== '') {
+    previewImg.src = imageUrl;
+    previewImg.alt = 'Event image';
+  } else {
+    previewImg.src = 'images/default.png';
+    previewImg.alt = 'Default image';
+  }
+}
+
+// Function to handle image load errors
+function handleImageError(img) {
+  // Show error message
+  const errorMessage = document.getElementById('imageErrorMessage');
+  errorMessage.style.display = 'flex';
+
+  // Set default image
+  img.style.display = 'none';
+}
+
+// Function to update image paths display
+function updateImagePaths(fullUrl, smallUrl, thumbUrl) {
+  document.getElementById('fullImagePath').textContent = fullUrl || 'None';
+  document.getElementById('smallImagePath').textContent = smallUrl || 'None';
+  document.getElementById('thumbImagePath').textContent = thumbUrl || 'None';
 }
 
 async function saveEvent() {
@@ -381,6 +565,7 @@ async function saveEvent() {
 function clearFormWithId(newId) {
   console.log('[DEBUG] Generated new event ID:', newId);
 
+  // Clear all form fields
   document.getElementById('id').value = newId;
   document.getElementById('title').value = '';
   document.getElementById('description').value = '';
@@ -392,6 +577,26 @@ function clearFormWithId(newId) {
   document.getElementById('small_image_url').value = '';
   document.getElementById('thumb_url').value = '';
   document.getElementById('group_id').value = '';
+
+  // Reset textarea heights to their default
+  document.getElementById('description').style.height = '';
+  document.getElementById('long_description').style.height = '';
+
+  // Reset image preview to default
+  updateImagePreview('');
+
+  // Reset image paths display
+  updateImagePaths('', '', '');
+
+  // No longer needed - removed additional fields toggle
+
+  // Switch to preview tab by default
+  document.getElementById('previewTabBtn').click();
+
+  // Reset image preview element
+  const previewImg = document.getElementById('eventImagePreview');
+  previewImg.style.display = 'block';
+  document.getElementById('imageErrorMessage').style.display = 'none';
 }
 
 async function generateSequentialEventId() {
