@@ -80,3 +80,38 @@ export function loadEventToForm(evt) {
   assign('group_id', evt.group_id);
 }
 
+export function setupMergeButton(events) {
+  const button = document.getElementById('mergeButton');
+  if (!button) {
+    console.warn('[UI] Merge button not found');
+    return;
+  }
+
+  button.addEventListener('click', async () => {
+    const token = localStorage.getItem('apiToken');
+    if (!token) {
+      alert('API token is required to merge.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/events/merge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, events })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(`❌ Merge failed: ${result.message || 'Unknown error'}`);
+        return;
+      }
+
+      alert(`✅ Merge successful! ${result.total} events now on server.`);
+    } catch (error) {
+      console.error('[MERGE ERROR]', error);
+      alert('An error occurred during merge. See console for details.');
+    }
+  });
+}

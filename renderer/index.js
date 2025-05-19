@@ -2,7 +2,12 @@ console.log('[DEBUG] renderer.js loaded');
 console.log('[DEBUG] window.api:', window.api);
 
 import { loadEvents, saveEvent, deleteEvent, addNewEvent } from './events.js';
-import { clearFormWithId, renderEventList, loadEventToForm } from './ui.js';
+import {
+  clearFormWithId,
+  renderEventList,
+  loadEventToForm,
+  setupMergeButton
+} from './ui.js';
 import { handleImageUpload } from './uploads.js';
 
 let events = [];
@@ -16,7 +21,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderEventList(events, loadEventToForm);
   console.log('[DEBUG] Event list rendered');
 
-  // Submit/save changes
+  // ✅ Setup merge functionality with the current in-memory event list
+  setupMergeButton(events);
+
+  // Handle save
   document.getElementById('eventForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     console.log('[DEBUG] Save button clicked');
@@ -27,7 +35,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     renderEventList(events, loadEventToForm);
   });
 
-  // Delete selected event
+  // Handle delete
   document.getElementById('deleteEventBtn').addEventListener('click', async () => {
     console.log('[DEBUG] Delete button clicked');
 
@@ -38,13 +46,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     clearFormWithId('');
   });
 
-  // Upload image for selected event
+  // Handle image upload
   document.getElementById('uploadImageBtn').addEventListener('click', async () => {
     console.log('[DEBUG] Upload image button clicked');
     handleImageUpload(events);
   });
 
-  // Add a new event (generate ID, clear form)
+  // Handle adding a new event
   document.getElementById('addEventBtn').addEventListener('click', async () => {
     console.log('[DEBUG] Add New Event button clicked');
 

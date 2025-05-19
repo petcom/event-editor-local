@@ -7,5 +7,8 @@ contextBridge.exposeInMainWorld('api', {
   selectAndProcessImage: (eventToken) => ipcRenderer.invoke('select-and-process-image', eventToken),
   generateTokenPrefix: () => ipcRenderer.invoke('get-mac-token-prefix'),
   uploadToS3: (localPath, destKey) => ipcRenderer.invoke('upload-to-s3', localPath, destKey),
+    path: {
+    basename: (p) => path.basename(p)
+  }
 
 });
