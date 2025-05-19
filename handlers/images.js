@@ -31,57 +31,38 @@ module.exports = function registerImageHandlers() {
     return token;
   });
 
-  ipcMain.handle('select-and-process-image', async (_event, eventToken) => {
-    console.log('[IMAGE] Selecting image for event token:', eventToken);
-
+ipcMain.handle('select-and-process-image', async (event, eventToken) => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
-      properties: ['openFile'],
-      filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }]
+        properties: ['openFile'],
+        filters: [{ name: 'Images', extensions: ['jpg', 'png', 'jpeg'] }]
     });
 
-    if (canceled || filePaths.length === 0) {
-      console.warn('[IMAGE] Image selection canceled or no file chosen');
-      return null;
+    if (canceled || filePaths.length === 0) return null;
+
+    const inputPath = filePaths[0];
+    const imageTypes = ['thumb', 'small', 'full'];
+    const outputBaseDir = path.join(__dirname, 'images');
+    const outputPaths = {};
+
+    await fs.promises.mkdir(outputBaseDir, { recursive: true });
+
+    for (const type of imageTypes) {
+        const filename = `${eventToken}-${type}.png`;
+        const outputPath = path.join(outputBaseDir, filename);
+        outputPaths[type] = outputPath;
+
+        // Use Sharp or similar to resize/copy accordingly
+        if (type === 'thumb') {
+            await sharp(inputPath).resize(100, 100).toFile(outputPath);
+        } else if (type === 'small') {
+            await sharp(inputPath).resize(300, 200).toFile(outputPath);
+        } else {
+            await sharp(inputPath).toFile(outputPath); // full size
+        }
     }
 
-    const originalPath = filePaths[0];
-    const ext = path.extname(originalPath).toLowerCase() || '.jpg';
-    const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    const uniqueName = `${dateStr}-${eventToken}-${uuidv4()}`;
-    const outputDir = path.join(__dirname, '..', 'images');
+    return outputPaths; // { thumb: '', small: '', full: '' }
+});
 
-    const fullPath = path.join(outputDir, 'full', `${uniqueName}${ext}`);
-    const smallPath = path.join(outputDir, 'small', `${uniqueName}${ext}`);
-    const thumbPath = path.join(outputDir, 'thumb', `${uniqueName}${ext}`);
+}
 
-    console.log('[IMAGE] Original path:', originalPath);
-    console.log('[IMAGE] Full path:', fullPath);
-    console.log('[IMAGE] Small path:', smallPath);
-    console.log('[IMAGE] Thumb path:', thumbPath);
-
-    fs.mkdirSync(path.join(outputDir, 'full'), { recursive: true });
-    fs.mkdirSync(path.join(outputDir, 'small'), { recursive: true });
-    fs.mkdirSync(path.join(outputDir, 'thumb'), { recursive: true });
-
-    try {
-      await sharp(originalPath).resize({ width: 1600 }).toFile(fullPath);
-      console.log('[IMAGE] Saved full size image');
-
-      await sharp(originalPath).resize({ width: 800 }).toFile(smallPath);
-      console.log('[IMAGE] Saved small image');
-
-      await sharp(originalPath).resize(200, 200).toFile(thumbPath);
-      console.log('[IMAGE] Saved thumbnail image');
-    } catch (err) {
-      console.error('[IMAGE] Error during image processing:', err);
-      throw err;
-    }
-
-    return {
-      full: fullPath,
-      small: smallPath,
-      thumb: thumbPath,
-      filename: `${uniqueName}${ext}`
-    };
-  });
-};

@@ -16,10 +16,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderEventList(events, loadEventToForm);
   console.log('[DEBUG] Event list rendered');
 
-  // ✅ Setup merge functionality with the current in-memory event list
   setupMergeButton(events);
 
-  // Handle save
   document.getElementById('eventForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     console.log('[DEBUG] Save button clicked');
@@ -30,7 +28,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     renderEventList(events, loadEventToForm);
   });
 
-  // Handle delete
   document.getElementById('deleteEventBtn').addEventListener('click', async () => {
     console.log('[DEBUG] Delete button clicked');
 
@@ -41,13 +38,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     clearFormWithId('');
   });
 
-  // Handle image upload
   document.getElementById('uploadImageBtn').addEventListener('click', async () => {
     console.log('[DEBUG] Upload image button clicked');
-    handleImageUpload(events);
+
+    const eventToken = document.getElementById('eventToken').value;
+    await handleImageUpload(eventToken, events);
+
+    renderEventList(events, loadEventToForm); // Optional: refresh UI after upload
   });
 
-  // Handle adding a new event
   document.getElementById('addEventBtn').addEventListener('click', async () => {
     console.log('[DEBUG] Add New Event button clicked');
 
