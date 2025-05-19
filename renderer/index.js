@@ -3,7 +3,8 @@ console.log('[DEBUG] window.api:', window.api);
 
 import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer } from './events.js';
 import { clearFormWithId, renderEventList, loadEventToForm, setupMergeButton } from './ui.js';
-import { handleImageUpload } from './uploads.js';
+import { handleImageUpload, syncAllImagesToS3 } from './uploads.js';
+
 
 let events = [];
 
@@ -55,4 +56,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     clearFormWithId(newEvent.id);
   });
+
+  document.getElementById('syncImagesBtn').addEventListener('click', async () => {
+    console.log('[SYNC] Sync Images button clicked');
+    await syncAllImagesToS3(events);
+
+    renderEventList(events, loadEventToForm); // Optional: refresh UI with updated S3 URLs
+    });
 });

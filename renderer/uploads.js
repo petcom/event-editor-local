@@ -1,8 +1,7 @@
 export async function handleImageUpload(eventToken, events) {
-  const basename = window.api?.path?.basename || ((p) => {
-    console.warn('[UPLOAD] window.api.path.basename not available — using fallback');
-    return p.split(/[\\/]/).pop();
-  });
+  const basename = window.api?.basename || ((p) => p.split(/[\\/]/).pop());
+
+  console.log('[UPLOAD] Basename function:', basename);
 
   console.log('[UPLOAD] Initiating image selection for token:', eventToken);
 
@@ -14,12 +13,10 @@ export async function handleImageUpload(eventToken, events) {
 
   console.log('[UPLOAD] Image processing result:', result);
 
-  // Update form fields with local paths
   document.getElementById('full_image_url').value = `./images/${eventToken}-full.png`;
   document.getElementById('small_image_url').value = `./images/${eventToken}-small.png`;
   document.getElementById('thumb_url').value = `./images/${eventToken}-thumb.png`;
 
-  // Update the matching event in memory
   const matchingEvent = events.find(e => e.id === eventToken);
   if (matchingEvent) {
     matchingEvent.full_image_url = `./images/${eventToken}-full.png`;
@@ -29,24 +26,74 @@ export async function handleImageUpload(eventToken, events) {
   } else {
     console.warn('[UPLOAD] No matching event found for token:', eventToken);
   }
+}
 
-  // Upload to S3 with prefix from .env
-  const s3Prefix = window.api.s3?.imagePrefix || 'images/';
-  const files = [
-    { local: result.full, remote: `${s3Prefix}${eventToken}-full.png` },
-    { local: result.small, remote: `${s3Prefix}${eventToken}-small.png` },
-    { local: result.thumb, remote: `${s3Prefix}${eventToken}-thumb.png` }
-  ];
+export async function syncAllImagesToS3(events) {
+  const s3Prefix = await window.api.s3.getImagePrefix();
+  const failed = [];
 
-  for (const f of files) {
-    console.log(`[UPLOAD] Uploading ${f.local} to ${f.remote}...`);
+  for (const evt of events) {
+    const token = evt.id;
+    const localPaths = {
+      full: `./images/${token}-full.png`,
+      small: `./images/${token}-small.png`,
+      thumb: `./images/${token}-thumb.png`
+    };
 
-    const uploadResult = await window.api.s3.uploadToS3(f.local, f.remote);
+for (const [type, localPath] of Object.entries(localPaths)) {
+  const s3Key = `${s3Prefix}${token}-${type}.png`;
+
+  try {
+    // 🔍 Check that file exists before uploading
+    const exists = await window.api.checkFileExists(localPath);
+    if (!exists) {
+      const msg = `[SKIP] File does not exist: ${localPath}`;
+      console.warn(msg);
+      failed.push(msg);
+      continue;
+    }
+
+    // 🚀 Proceed with upload
+    const uploadResult = await window.api.s3.uploadToS3(localPath, s3Key);
 
     if (uploadResult.success) {
-      console.log('[UPLOAD] S3 URL:', uploadResult.url);
+      evt[`${type}_image_url`] = uploadResult.url;
+      console.log(`[SYNC] Uploaded ${type} image for ${token}: ${uploadResult.url}`);
     } else {
-      console.error('[UPLOAD] Failed to upload', f.local, '→', f.remote, '::', uploadResult.error);
+      throw new Error(uploadResult.error || 'Unknown upload error');
     }
+  } catch (err) {
+    const msg = `[ERROR] Failed to upload ${type} image for ${token}: ${err.message}`;
+    console.error(msg);
+    failed.push(msg);
+  }
+}
+
+  }
+
+  try {
+    await window.api.saveEvents(events);
+    console.log('[SYNC] Updated events.json saved');
+  } catch (err) {
+    const msg = `[ERROR] Failed to write events.json: ${err.message}`;
+    console.error(msg);
+    failed.push(msg);
+  }
+
+  if (failed.length === 0) {
+    alert('✅ Image sync to S3 complete!');
+  } else {
+    alert(`❌ Image sync completed with ${failed.length} error(s). See log for details.`);
+    await logSyncErrors(failed);
+  }
+}
+
+async function logSyncErrors(errors) {
+  const logContent = errors.join('\n') + '\n';
+  try {
+    await window.api.appendToLogFile('image-sync-errors.log', logContent);
+    console.log('[SYNC] Errors logged to image-sync-errors.log');
+  } catch (err) {
+    console.error('[SYNC] Failed to write error log:', err.message);
   }
 }
