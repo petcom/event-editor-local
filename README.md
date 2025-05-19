@@ -33,6 +33,20 @@ This application allows users to:
 └── renderer.js         # Frontend renderer process
 ```
 
+## Documentation
+
+The project includes comprehensive documentation in the `docs/` directory:
+
+- 📐 [`ARCHITECTURE.md`](docs/ARCHITECTURE.md) - Detailed description of the application's architecture, including main and renderer processes, component structure, and data flow
+- 📝 [`STYLEGUIDE.md`](docs/STYLEGUIDE.md) - Coding standards and best practices for JavaScript/TypeScript, CSS, and documentation
+- 🛠️ [`DEVELOPMENT.md`](docs/DEVELOPMENT.md) - Development environment setup, workflow, and guidelines for contributors
+- 🧪 [`TESTING.md`](docs/TESTING.md) - Testing strategy, guidelines, and examples for unit, integration, and end-to-end tests
+- 🚀 [`DEPLOYMENT.md`](docs/DEPLOYMENT.md) - Build, packaging, and distribution procedures for different platforms
+- 🔒 [`SECURITY.md`](docs/SECURITY.md) - Security best practices, guidelines, and procedures for maintaining application security
+- 🔧 [`MAINTENANCE.md`](docs/MAINTENANCE.md) - Regular maintenance tasks, monitoring procedures, and troubleshooting guides
+
+Each document is regularly updated as the application evolves to ensure accurate and current information.
+
 ## Getting Started
 
 ### Prerequisites
