@@ -80,38 +80,52 @@ export function loadEventToForm(evt) {
   assign('group_id', evt.group_id);
 }
 
+
+import { mergeEventsToServer } from './events.js';
+
 export function setupMergeButton(events) {
   const button = document.getElementById('mergeButton');
-  if (!button) {
-    console.warn('[UI] Merge button not found');
+  const status = document.getElementById('mergeStatus');
+
+  if (!button || !status) {
+    console.warn('[UI] Merge button or status area not found');
     return;
+  }
+
+  async function attemptMerge(token) {
+    status.textContent = '🔄 Attempting to merge events...';
+    button.disabled = true;
+
+    try {
+      const result = await mergeEventsToServer(token || null);
+
+      if (result.status === 423) {
+        status.textContent = '⏳ Merge is locked. Retrying in 10 seconds...';
+        setTimeout(() => attemptMerge(token), 10000);
+        return;
+      }
+
+      if (result.success) {
+        status.textContent = `✅ Merge successful! ${result.total} events on server.`;
+      } else {
+        status.textContent = `❌ Merge failed: ${result.error || 'Unknown error'}`;
+      }
+    } catch (error) {
+      console.error('[MERGE ERROR]', error);
+      status.textContent = `❌ Unexpected error: ${error.message}`;
+    } finally {
+      button.disabled = false;
+    }
   }
 
   button.addEventListener('click', async () => {
     const token = localStorage.getItem('apiToken');
-    if (!token) {
-      alert('API token is required to merge.');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:3000/api/events/merge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, events })
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        alert(`❌ Merge failed: ${result.message || 'Unknown error'}`);
-        return;
-      }
-
-      alert(`✅ Merge successful! ${result.total} events now on server.`);
-    } catch (error) {
-      console.error('[MERGE ERROR]', error);
-      alert('An error occurred during merge. See console for details.');
-    }
+    attemptMerge(token);
   });
 }
+
+
+
+
+
+

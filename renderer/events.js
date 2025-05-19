@@ -89,3 +89,13 @@ export async function addNewEvent(events) {
   console.log('[EVENTS] Generated new event ID:', newId);
   return { id: newId };
 }
+
+export async function mergeEventsToServer(token) {
+  try {
+    const result = await window.api.mergeEventsToServer(token);
+    return result;
+  } catch (err) {
+    console.error('[EVENTS] Merge failed from renderer:', err);
+    return { success: false, error: err.message };
+  }
+}

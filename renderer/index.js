@@ -1,13 +1,8 @@
 console.log('[DEBUG] renderer.js loaded');
 console.log('[DEBUG] window.api:', window.api);
 
-import { loadEvents, saveEvent, deleteEvent, addNewEvent } from './events.js';
-import {
-  clearFormWithId,
-  renderEventList,
-  loadEventToForm,
-  setupMergeButton
-} from './ui.js';
+import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer } from './events.js';
+import { clearFormWithId, renderEventList, loadEventToForm, setupMergeButton } from './ui.js';
 import { handleImageUpload } from './uploads.js';
 
 let events = [];
