@@ -6,8 +6,9 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Environment files
-.env
-.env.*
+# we need these for now
+#.env
+#.env.*
 
 # Electron build artifacts
 /dist
@@ -47,4 +48,6 @@ package-lock.json
 *.seed
 crash-reports/
 
+#images ignore:
+images/
 
