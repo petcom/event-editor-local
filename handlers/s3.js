@@ -4,19 +4,35 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-console.log('[S3] Initializing S3 handler...');
-console.log('[S3] Using endpoint:', process.env.S3_ENDPOINT);
-console.log('[S3] Target bucket:', process.env.S3_BUCKET);
+// ✅ Load and correctly name environment variables
+const s3Bucket = process.env.S3_BUCKET;
+const s3Region = process.env.S3_REGION;
+const s3Endpoint = process.env.S3_ENDPOINT;
+const s3Key = process.env.S3_KEY;
+const s3Secret = process.env.S3_SECRET;
+const s3ImagePrefix = process.env.S3_IMAGE_PREFIX || 'images/';
 
+// ✅ Construct full endpoint URL
+const fullEndpoint = `https://${s3Bucket}.${s3Region}.${s3Endpoint.replace(/^https?:\/\//, '').replace(/\/$/, '')}`;
+const doEndpoint = `https://${s3Region}.${s3Endpoint.replace(/^https?:\/\//, '').replace(/\/$/, '')}`;
+
+// ✅ Console checks
+console.log('[S3] Initializing S3 handler...');
+console.log('[S3] Using endpoint:', fullEndpoint);
+console.log('[S3] Using endpoint:', doEndpoint);
+console.log('[S3] Target bucket:', s3Bucket);
+
+// ✅ Initialize S3 client
 const s3 = new S3Client({
-  region: process.env.S3_REGION,
-  endpoint: process.env.S3_ENDPOINT,
+  region: s3Region,
+  endpoint: doEndpoint,
   credentials: {
-    accessKeyId: process.env.S3_KEY,
-    secretAccessKey: process.env.S3_SECRET
+    accessKeyId: s3Key,
+    secretAccessKey: s3Secret,
   }
 });
 
+// ✅ Utility for content type
 function getContentType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   if (ext === '.png') return 'image/png';
@@ -24,6 +40,7 @@ function getContentType(filePath) {
   return 'application/octet-stream';
 }
 
+// ✅ Register IPC handler
 module.exports = function registerS3Handlers() {
   ipcMain.handle('upload-to-s3', async (_event, localFilePath, destinationKey) => {
     console.log('[S3] Received upload-to-s3 request');
@@ -38,9 +55,10 @@ module.exports = function registerS3Handlers() {
 
       const fileStream = fs.createReadStream(localFilePath);
       const contentType = getContentType(localFilePath);
+      console.log('[S3] Content-Type:', contentType);
 
       const command = new PutObjectCommand({
-        Bucket: process.env.S3_BUCKET,
+        Bucket: s3Bucket, // ✅ FIXED: use correct variable
         Key: destinationKey,
         Body: fileStream,
         ACL: 'public-read',
@@ -49,8 +67,8 @@ module.exports = function registerS3Handlers() {
 
       await s3.send(command);
 
-      const publicUrl = `${process.env.S3_ENDPOINT.replace('https://', `https://${process.env.S3_BUCKET}.`)}/${destinationKey}`;
-      console.log('[S3] Upload successful. Public URL:', publicUrl);
+      const publicUrl = `${fullEndpoint}/${destinationKey}`;
+      console.log('[S3] Final Public URL:', publicUrl);
 
       return { success: true, url: publicUrl };
     } catch (err) {
@@ -60,6 +78,6 @@ module.exports = function registerS3Handlers() {
   });
 
   ipcMain.handle('get-s3-prefix', async () => {
-    return process.env.S3_IMAGE_PREFIX || 'images/';
+    return s3ImagePrefix;
   });
 };

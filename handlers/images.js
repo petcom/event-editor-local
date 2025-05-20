@@ -41,8 +41,10 @@ ipcMain.handle('select-and-process-image', async (event, eventToken) => {
 
     const inputPath = filePaths[0];
     const imageTypes = ['thumb', 'small', 'full'];
-    const outputBaseDir = path.join(__dirname, 'images');
+    const outputBaseDir = path.join(process.cwd(), 'images');
     const outputPaths = {};
+
+    console.log('[IMAGE] Output image path:', outputBaseDir);
 
     await fs.promises.mkdir(outputBaseDir, { recursive: true });
 
