@@ -1,3 +1,22 @@
+export function lockUIForSync() {
+  const form = document.getElementById('eventForm');
+  const list = document.getElementById('eventList');
+  if (form) form.classList.add('locked');
+  if (list) list.classList.add('locked');
+}
+
+export function unlockUIAfterSync() {
+  const form = document.getElementById('eventForm');
+  const list = document.getElementById('eventList');
+  if (form) form.classList.remove('locked');
+  if (list) list.classList.remove('locked');
+}
+
+export function enableFormInputs() {
+  const form = document.getElementById('eventForm');
+  if (form) form.classList.remove('locked');
+}
+
 export function clearFormWithId(newId) {
   console.log('[UI] Clearing form and setting new ID:', newId);
 
@@ -41,8 +60,10 @@ export function renderEventList(events, onClick) {
     const li = document.createElement('li');
     li.textContent = `${evt.event_date}: ${evt.title}`;
     li.addEventListener('click', () => {
-      console.log('[UI] Event clicked:', evt.id, 'at index', i);
-      onClick(evt);
+      if (!list.classList.contains('locked')) {
+        console.log('[UI] Event clicked:', evt.id, 'at index', i);
+        onClick(evt);
+      }
     });
     list.appendChild(li);
     console.log('[UI] Appended event to list:', evt.id);
@@ -80,7 +101,6 @@ export function loadEventToForm(evt) {
   assign('group_id', evt.group_id);
 }
 
-
 import { mergeEventsToServer } from './events.js';
 
 export function setupMergeButton(events) {
@@ -95,6 +115,7 @@ export function setupMergeButton(events) {
   async function attemptMerge(token) {
     status.textContent = '🔄 Attempting to merge events...';
     button.disabled = true;
+    lockUIForSync();
 
     try {
       const result = await mergeEventsToServer(token || null);
@@ -115,6 +136,7 @@ export function setupMergeButton(events) {
       status.textContent = `❌ Unexpected error: ${error.message}`;
     } finally {
       button.disabled = false;
+      unlockUIAfterSync();
     }
   }
 
@@ -123,9 +145,3 @@ export function setupMergeButton(events) {
     attemptMerge(token);
   });
 }
-
-
-
-
-
-

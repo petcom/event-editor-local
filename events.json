@@ -88,5 +88,24 @@
     "thumb_url": "./images/20250519-F325-005-thumb.png",
     "group_id": "g1",
     "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-005-thumb.png"
+  },
+  {
+    "id": "20250520-F325-001",
+    "title": "test event",
+    "description": "dest tescription",
+    "long_description": "heres a long one",
+    "event_date": "2025-05-24",
+    "display_from_date": "2025-05-20",
+    "tags": [
+      "sonar",
+      "test",
+      "me",
+      "you"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250520-F325-001-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250520-F325-001-small.png",
+    "thumb_url": "./images/20250520-F325-001-thumb.png",
+    "group_id": "g1",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250520-F325-001-thumb.png"
   }
 ]

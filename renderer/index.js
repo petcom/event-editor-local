@@ -2,9 +2,8 @@ console.log('[DEBUG] renderer.js loaded');
 console.log('[DEBUG] window.api:', window.api);
 
 import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer } from './events.js';
-import { clearFormWithId, renderEventList, loadEventToForm, setupMergeButton } from './ui.js';
+import { clearFormWithId, renderEventList, loadEventToForm, setupMergeButton, lockUIForSync, unlockUIAfterSync, enableFormInputs } from './ui.js';
 import { handleImageUpload, syncAllImagesToS3 } from './uploads.js';
-
 
 let events = [];
 
@@ -39,22 +38,21 @@ window.addEventListener('DOMContentLoaded', async () => {
     clearFormWithId('');
   });
 
-document.getElementById('uploadImageBtn').addEventListener('click', async () => {
-  console.log('[DEBUG] Upload image button clicked');
+  document.getElementById('uploadImageBtn').addEventListener('click', async () => {
+    console.log('[DEBUG] Upload image button clicked');
 
-  const input = document.getElementById('eventToken') || document.getElementById('id');
-  if (!input) {
-    console.error('[UPLOAD] Cannot find eventToken or id field in form');
-    return;
-  }
+    const input = document.getElementById('eventToken') || document.getElementById('id');
+    if (!input) {
+      console.error('[UPLOAD] Cannot find eventToken or id field in form');
+      return;
+    }
 
-  const eventToken = input.value;
-  console.log('[UPLOAD] Using token for image upload:', eventToken);
+    const eventToken = input.value;
+    console.log('[UPLOAD] Using token for image upload:', eventToken);
 
-  await handleImageUpload(eventToken, events);
-  renderEventList(events, loadEventToForm);
-});
-
+    await handleImageUpload(eventToken, events);
+    renderEventList(events, loadEventToForm);
+  });
 
   document.getElementById('addEventBtn').addEventListener('click', async () => {
     console.log('[DEBUG] Add New Event button clicked');
@@ -63,12 +61,15 @@ document.getElementById('uploadImageBtn').addEventListener('click', async () => 
     console.log('[DEBUG] Generated new event:', newEvent);
 
     clearFormWithId(newEvent.id);
+    enableFormInputs();
   });
 
   document.getElementById('syncImagesBtn').addEventListener('click', async () => {
     console.log('[SYNC] Sync Images button clicked');
+    lockUIForSync();
     await syncAllImagesToS3(events);
+    unlockUIAfterSync();
 
-    renderEventList(events, loadEventToForm); // Optional: refresh UI with updated S3 URLs
-    });
+    renderEventList(events, loadEventToForm);
+  });
 });
