@@ -1,4 +1,7 @@
+console.log('[EVENTS] events.js loaded');
+
 import { generateTokenPrefix } from './token.js';
+import { getAuthToken } from './auth.js';
 
 export async function loadEvents() {
   try {
@@ -90,7 +93,13 @@ export async function addNewEvent(events) {
   return { id: newId };
 }
 
-export async function mergeEventsToServer(token) {
+export async function mergeEventsToServer() {
+  const token = getAuthToken();
+  if (!token) {
+    alert('You must log in before merging.');
+    return { success: false, error: 'Not logged in' };
+  }
+
   try {
     const result = await window.api.mergeEventsToServer(token);
     return result;

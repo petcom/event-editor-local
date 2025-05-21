@@ -1,0 +1,56 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    label, input { display: block; margin: 0.5rem 0; }
+  </style>
+
+
+</head>
+<body>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label>Username: <input type="text" id="username" required /></label>
+    <label>Password: <input type="password" id="password" required /></label>
+    <button type="submit">Login</button>
+    <p id="loginStatus"></p>
+  </form>
+
+  <script>
+     console.log('window.env:', window.env);
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+    //Use env variable for base UR
+      const baseUrl = window.env.mergeServerURL;
+      const endpoint = window.env.loginAPIEndpoint;
+      const url = baseUrl.replace(/\/$/, '') + endpoint;
+
+        // Use the base URL and endpoint to construct the full URL
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, password: pass })
+      });
+
+      const data = await res.json();
+      console.log('[LOGIN WINDOW] Token received from server:', data.token);
+
+
+     if (data.token) {
+      // ✅ Send token to main process
+        window.loginAPI.sendLoginToken(data.token); // ✅ Use safe bridge
+        window.close();
+    } else {
+      alert('Login failed');
+    }
+    });
+  </script>
+</body>
+</html>

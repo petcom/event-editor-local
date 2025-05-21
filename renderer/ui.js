@@ -101,9 +101,8 @@ export function loadEventToForm(evt) {
   assign('group_id', evt.group_id);
 }
 
-import { mergeEventsToServer } from './events.js';
 
-export function setupMergeButton(events) {
+export function setupMergeButton(events, getAuthToken) {
   const button = document.getElementById('mergeButton');
   const status = document.getElementById('mergeStatus');
 
@@ -118,8 +117,7 @@ export function setupMergeButton(events) {
     lockUIForSync();
 
     try {
-      const result = await mergeEventsToServer(token || null);
-
+      const result = await window.api.mergeEventsToServer(token);
       if (result.status === 423) {
         status.textContent = '⏳ Merge is locked. Retrying in 10 seconds...';
         setTimeout(() => attemptMerge(token), 10000);
@@ -141,7 +139,12 @@ export function setupMergeButton(events) {
   }
 
   button.addEventListener('click', async () => {
-    const token = localStorage.getItem('apiToken');
+    const token = await getAuthToken();
+    if (!token) {
+    console.error('[UI] No auth token available');
+    status.textContent = '❌ Cannot merge: not logged in.';
+    return;
+    }
     attemptMerge(token);
   });
 }

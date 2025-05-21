@@ -8,7 +8,12 @@ contextBridge.exposeInMainWorld('api', {
   selectAndProcessImage: (eventToken) => ipcRenderer.invoke('select-and-process-image', eventToken),
   generateTokenPrefix: () => ipcRenderer.invoke('get-mac-token-prefix'),
   mergeEventsToServer: (token) => ipcRenderer.invoke('merge-events-to-server', token),
-
+    //login window
+  openLoginWindow: () => ipcRenderer.send('open-login-window'),
+  // login callback
+  ipc: {
+    onAuthToken: (callback) => ipcRenderer.on('auth-token', (_event, token) => callback(token))
+    },
   // Path utils
   path: {
     basename: (p) => path.basename(p),
@@ -28,4 +33,9 @@ contextBridge.exposeInMainWorld('api', {
 
   // Logging
   appendToLogFile: (filename, content) => ipcRenderer.invoke('append-to-log-file', filename, content),
+});
+
+contextBridge.exposeInMainWorld('env', {
+  mergeServerURL: process.env.MERGE_SERVER_URL,
+  loginAPIEndpoint: process.env.LOGIN_API_ENDPOINT,
 });

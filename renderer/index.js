@@ -4,11 +4,33 @@ console.log('[DEBUG] window.api:', window.api);
 import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer } from './events.js';
 import { clearFormWithId, renderEventList, loadEventToForm, setupMergeButton, lockUIForSync, unlockUIAfterSync, enableFormInputs } from './ui.js';
 import { handleImageUpload, syncAllImagesToS3 } from './uploads.js';
+import { getAuthToken, setAuthToken, clearAuthToken } from './auth.js';
 
 let events = [];
 
 window.addEventListener('DOMContentLoaded', async () => {
   console.log('[DEBUG] DOMContentLoaded fired');
+
+  // Require Login on each Load
+
+const statusSpan = document.getElementById('serverStatus');
+
+window.api?.ipc?.onAuthToken?.((token) => {
+  console.log('[MAIN WINDOW] Token received from main process:', token);
+  setAuthToken(token);
+  if (statusSpan) statusSpan.textContent = 'Logged in';
+});
+
+
+  // Setup login button
+const loginBtn = document.getElementById('loginBtn');
+if (loginBtn) {
+  loginBtn.addEventListener('click', () => {
+    console.log('[UI] Requesting login window...');
+    window.api.openLoginWindow();
+  });
+}
+
 
   events = await loadEvents();
   console.log('[DEBUG] Initial events loaded:', events);
@@ -16,7 +38,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderEventList(events, loadEventToForm);
   console.log('[DEBUG] Event list rendered');
 
-  setupMergeButton(events);
+  setupMergeButton(events, getAuthToken);
 
   document.getElementById('eventForm').addEventListener('submit', async (e) => {
     e.preventDefault();

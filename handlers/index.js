@@ -3,4 +3,5 @@ module.exports = function registerAllHandlers() {
   require('./images')();
   require('./s3')();
   require('./utilities')();
+  require('./login')();
 };
