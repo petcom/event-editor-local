@@ -1,7 +1,7 @@
 console.log('[DEBUG] renderer.js loaded');
 console.log('[DEBUG] window.api:', window.api);
 
-import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer } from './events.js';
+import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer, syncEventsWithServer } from './events.js';
 import { clearFormWithId, renderEventList, loadEventToForm, setupMergeButton, lockUIForSync, unlockUIAfterSync, enableFormInputs } from './ui.js';
 import { handleImageUpload, syncAllImagesToS3 } from './uploads.js';
 import { getAuthToken, setAuthToken, clearAuthToken } from './auth.js';
@@ -94,4 +94,49 @@ if (loginBtn) {
 
     renderEventList(events, loadEventToForm);
   });
+
+  document.getElementById('syncEventsBtn').addEventListener('click', async () => {
+    console.log('[SYNC] Sync Events with Server button clicked');
+
+    lockUIForSync();
+
+    const result = await syncEventsWithServer();
+    if (result.success) {
+      events = result.updated;
+      alert(`Sync complete: ${events.length} events retained.`);
+      renderEventList(events, loadEventToForm);
+    } else {
+      alert('Sync failed: ' + result.error);
+    }
+
+    unlockUIAfterSync();
+  });
+
+document.getElementById('copyEventBtn').addEventListener('click', async () => {
+    console.log('[DEBUG] Copy Event button clicked');
+
+    const currentId = document.getElementById('id').value;
+    const currentEvent = events.find(e => e.id === currentId);
+
+    if (!currentEvent) {
+      alert('No event selected to copy.');
+      return;
+    }
+
+    const { id: newId } = await addNewEvent(events);
+    const copiedEvent = {
+      ...currentEvent,
+      id: newId // Replace only the ID
+    };
+
+    console.log('[DEBUG] Created copied event:', copiedEvent);
+
+    events.push(copiedEvent);
+    await window.api.saveEvents(events);
+    renderEventList(events, loadEventToForm);
+    loadEventToForm(copiedEvent);
+
+    alert(`Event copied successfully as "${copiedEvent.title}" with ID ${copiedEvent.id}.`);
+  });
+
 });

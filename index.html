@@ -1,54 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Event Editor</title>
   <meta charset="UTF-8" />
-<link rel="stylesheet" href="inc/css/index.css">
+  <title>Event Editor</title>
+  <link rel="stylesheet" href="inc/css/index.css">
 </head>
-
 <body>
-   <h1>Hello, Electron!</h1>
-   <header>
 
-<button id="loginBtn">Login</button>
-<span id="serverStatus">Not logged in</span>
-</header>
+  <header>
+    <h1>Event Editor</h1>
+    <button id="loginBtn">🔐 Login</button>
+    <span id="serverStatus">Not logged in</span>
+  </header>
 
-   <a href="events.html">Scott's Events</a>
-  <div>
-<h1>Event List</h1>
-  <ul id="eventList"></ul>
-  </div>
-  <div>
-  <h2>Edit Event</h2>
-  <form id="eventForm">
-    <label>ID: <input type="text" id="id" readonly /></label><br />
-    <label>Title: <input type="text" id="title" /></label><br />
-    <label>Description: <input type="text" id="description" /></label><br />
-    <label>Long Description: <textarea id="long_description"></textarea></label><br />
-    <label>Event Date: <input type="date" id="event_date" /></label><br />
-    <label>Display From Date: <input type="date" id="display_from_date" /></label><br />
-    <label>Tags (comma-separated): <input type="text" id="tags" /></label><br />
-    <label>Full Image URL: <input type="text" id="full_image_url" /></label><br />
-    <label>Small Image URL: <input type="text" id="small_image_url" /></label><br />
-    <label>Thumbnail URL: <input type="text" id="thumb_url" /></label><br />
-    <label>Group ID: <input type="text" id="group_id" /></label><br />
+  <nav style="margin: 1rem 0;">
+    <a href="events.html">📅 Scott's Events</a>
+  </nav>
 
-    <button id="addEventBtn">+ New Event</button>
+  <main>
+    <!-- Event List Section -->
+    <section>
+      <h2>Event List</h2>
+      <ul id="eventList"></ul>
+    </section>
 
-    <button id="uploadImageBtn">Add Image</button>
+    <!-- Edit Event Section -->
+    <section>
+      <h2>Edit Event</h2>
+      <form id="eventForm">
+        <label>ID: <input type="text" id="id" readonly /></label><br />
+        <label>Title: <input type="text" id="title" /></label><br />
+        <label>Description: <input type="text" id="description" /></label><br />
+        <label>Long Description: <textarea id="long_description"></textarea></label><br />
+        <label>Event Date: <input type="date" id="event_date" /></label><br />
+        <label>Display From Date: <input type="date" id="display_from_date" /></label><br />
+        <label>Tags (comma-separated): <input type="text" id="tags" /></label><br />
+        <label>Full Image URL: <input type="text" id="full_image_url" /></label><br />
+        <label>Small Image URL: <input type="text" id="small_image_url" /></label><br />
+        <label>Thumbnail URL: <input type="text" id="thumb_url" /></label><br />
+        <label>Group ID: <input type="text" id="group_id" /></label><br />
 
-    <button type="submit">Save Changes</button>
+        <div style="margin-top: 1rem;">
+          <button id="addEventBtn" type="button">➕ New Event</button>
+          <button id="uploadImageBtn" type="button">🖼️ Add Image</button>
+          <button type="submit">💾 Save Changes</button>
+          <button id="copyEventBtn" type="button">📄 Copy Event</button>
+        </div>
+      </form>
+    </section>
 
-  </form>
-</div>
-  <button id="deleteEventBtn" type="button" style="margin-top: 1rem; background-color: red; color: white;">- Delete Event</button>
- 
-  <button id="mergeButton">Merge Events to Server</button>
-  <div id="mergeStatus" style="margin-top: 1em; font-family: monospace; color: #333;"></div>
+    <!-- Bottom Controls -->
+    <section style="margin-top: 2rem;">
+      <button id="deleteEventBtn" type="button" style="background-color: red; color: white;">🗑️ Delete Event</button>
+      <button id="mergeButton">📤 Merge Events to Server</button>
+      <button id="syncImagesBtn" class="btn btn-primary">🖼️ Sync Images to S3</button>
+      <button id="syncEventsBtn">🔄 Sync Events with Server</button>
 
-  <button id="syncImagesBtn" class="btn btn-primary">Sync Images to S3</button>
+      <div id="mergeStatus" style="margin-top: 1em; font-family: monospace; color: #333;"></div>
+    </section>
+  </main>
 
-<script type="module" src="renderer/index.js"></script>
+  <script type="module" src="renderer/index.js"></script>
 </body>
 </html>
