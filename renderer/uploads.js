@@ -15,13 +15,13 @@ export async function handleImageUpload(eventToken, events) {
 
   document.getElementById('full_image_url').value = `./images/${eventToken}-full.png`;
   document.getElementById('small_image_url').value = `./images/${eventToken}-small.png`;
-  document.getElementById('thumb_url').value = `./images/${eventToken}-thumb.png`;
+  document.getElementById('thumb_image_url').value = `./images/${eventToken}-thumb.png`;
 
   const matchingEvent = events.find(e => e.id === eventToken);
   if (matchingEvent) {
     matchingEvent.full_image_url = `./images/${eventToken}-full.png`;
     matchingEvent.small_image_url = `./images/${eventToken}-small.png`;
-    matchingEvent.thumb_url = `./images/${eventToken}-thumb.png`;
+    matchingEvent.thumb_image_url = `./images/${eventToken}-thumb.png`;
     console.log('[UPLOAD] Updated matching event:', matchingEvent);
   } else {
     console.warn('[UPLOAD] No matching event found for token:', eventToken);
@@ -35,9 +35,9 @@ export async function syncAllImagesToS3(events) {
   for (const evt of events) {
     const token = evt.id;
     const localPaths = {
-      full: `./images/${token}-full.png`,
-      small: `./images/${token}-small.png`,
-      thumb: `./images/${token}-thumb.png`
+      full: evt.full_image_url,
+      small: evt.small_image_url,
+      thumb: evt.thumb_image_url
     };
 
 for (const [type, localPath] of Object.entries(localPaths)) {

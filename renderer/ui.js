@@ -23,7 +23,7 @@ export function clearFormWithId(newId) {
   const fields = [
     'id', 'title', 'description', 'long_description',
     'event_date', 'display_from_date', 'tags',
-    'full_image_url', 'small_image_url', 'thumb_url', 'group_id'
+    'full_image_url', 'small_image_url', 'thumb_image_url', 'group_id'
   ];
 
   fields.forEach(field => {
@@ -97,7 +97,7 @@ export function loadEventToForm(evt) {
   assign('tags', evt.tags.join(', '));
   assign('full_image_url', evt.full_image_url);
   assign('small_image_url', evt.small_image_url);
-  assign('thumb_url', evt.thumb_url);
+  assign('thumb_image_url', evt.thumb_image_url);
   assign('group_id', evt.group_id);
 }
 

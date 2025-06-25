@@ -1,4 +1,4 @@
-console.log('[DEBUG] renderer.js loaded');
+
 console.log('[DEBUG] window.api:', window.api);
 
 import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer, syncEventsWithServer } from './events.js';

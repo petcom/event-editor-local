@@ -13,6 +13,60 @@
     "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-full.png",
     "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-small.png",
     "thumb_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
+    "group_id": "g1",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png"
+  },
+  {
+    "id": "20250625-B835-001",
+    "title": "Test event 2",
+    "description": "Here's a Test event",
+    "long_description": "Here's a test event",
+    "event_date": "2025-06-28",
+    "display_from_date": "2025-06-25",
+    "tags": [
+      "sonar",
+      "public",
+      "music"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-001-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-001-small.png",
+    "thumb_url": "./images/20250625-B835-001-thumb.png",
+    "group_id": "g1",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-001-thumb.png"
+  },
+  {
+    "id": "20250625-B835-002",
+    "title": "Test event 3",
+    "description": "Here's a Test event 3",
+    "long_description": "Here's a test event 3",
+    "event_date": "2025-06-29",
+    "display_from_date": "2025-06-25",
+    "tags": [
+      "sonar",
+      "public",
+      "music"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-002-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-002-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-002-thumb.png",
+    "group_id": "g1"
+  },
+  {
+    "id": "20250625-B835-003",
+    "title": "Test Event 4",
+    "description": "Test Event 4 is the bomb",
+    "long_description": "Test Event 4 is the bomb",
+    "event_date": "2025-06-30",
+    "display_from_date": "2025-06-25",
+    "tags": [
+      "sonar",
+      "public",
+      "music",
+      "center"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-003-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-003-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-003-thumb.png",
     "group_id": "g1"
   }
 ]

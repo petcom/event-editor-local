@@ -39,7 +39,7 @@ export async function saveEvent(events) {
     tags: document.getElementById('tags').value.split(',').map(t => t.trim()),
     full_image_url: document.getElementById('full_image_url').value,
     small_image_url: document.getElementById('small_image_url').value,
-    thumb_url: document.getElementById('thumb_url').value,
+    thumb_image_url: document.getElementById('thumb_image_url').value,
     group_id: document.getElementById('group_id').value
   };
 
