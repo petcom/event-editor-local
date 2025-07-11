@@ -35,14 +35,15 @@ ipcMain.on('open-login-window', () => {
   openLoginWindow();
 });
 
-ipcMain.on('login-success', (event, token) => {
+ipcMain.on('login-success', (event, token, serverUrl) => {
   console.log('[MAIN] Login token received:', token);
+  console.log('[MAIN] Server URL:', serverUrl);
 
-  // Send the token to the first main window (or refine with a title filter if needed)
+  // Send the token and server info to the first main window
   const mainWin = BrowserWindow.getAllWindows().find(win => win.title !== 'Login');
 
   if (mainWin) {
-    mainWin.webContents.send('auth-token', token);
+    mainWin.webContents.send('auth-token', token, serverUrl);
   } else {
     console.warn('[MAIN] No main window found to send auth token');
   }

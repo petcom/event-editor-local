@@ -4,7 +4,8 @@ const fs = require('fs');
 require('dotenv').config();
 
 const eventsPath = path.join(__dirname, '..', 'events.json');
-const MERGE_SERVER_URL = process.env.MERGE_SERVER_URL;
+// Remove fixed server URL - will be passed dynamically
+// const MERGE_SERVER_URL = process.env.MERGE_SERVER_URL;
 
 console.log('[EVENTS] Registering event handlers');
 console.log('[EVENTS] Event file path:', eventsPath);
@@ -45,13 +46,18 @@ module.exports = function registerEventHandlers() {
     }
   });
 
-  ipcMain.handle('merge-events-to-server', async (_event, tokenArg) => {
+  ipcMain.handle('merge-events-to-server', async (_event, tokenArg, serverUrl) => {
     console.log('[EVENTS] merge-events-to-server handler triggered');
     console.log('[EVENTS] Token received:', tokenArg);
+    console.log('[EVENTS] Server URL received:', serverUrl);
 
     const MAX_RETRIES = 6; // 6 x 10s = 60 seconds
     const RETRY_INTERVAL_MS = 10000;
     const token = tokenArg;
+    
+    // Use passed server URL instead of fixed environment variable
+    const MERGE_SERVER_URL = serverUrl || process.env.MERGE_SERVER_URL;
+    console.log('[EVENTS] Using server URL:', MERGE_SERVER_URL);
 
     try {
       if (!fs.existsSync(eventsPath)) {

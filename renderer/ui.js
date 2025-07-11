@@ -90,7 +90,19 @@ export function renderEventList(events, onClickCallback) {
 
   events.forEach((evt, i) => {
     const li = document.createElement('li');
-    let displayText = `${evt.event_date}: ${evt.title}`;
+    
+    // Format the date for display - show time if it's not 00:00
+    let displayDate = evt.event_date;
+    if (evt.event_date && evt.event_date.includes('T')) {
+      const [datePart, timePart] = evt.event_date.split('T');
+      if (timePart && timePart !== '00:00') {
+        displayDate = `${datePart} ${timePart}`;
+      } else {
+        displayDate = datePart;
+      }
+    }
+    
+    let displayText = `${displayDate}: ${evt.title}`;
     
     // Add indicator for events that need to be submitted
     if (evt.event_updated_not_submitted) {
@@ -121,6 +133,16 @@ export function loadEventToForm(evt) {
   const assign = (id, value) => {
     const el = document.getElementById(id);
     if (el) {
+      // Handle datetime-local conversion for date fields
+      if ((id === 'event_date' || id === 'display_from_date') && value) {
+        // If value is date-only (YYYY-MM-DD), convert to datetime-local format
+        if (value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          value = value + 'T00:00'; // Add default time
+        }
+        // If value already has datetime format (YYYY-MM-DDTHH:MM), use as-is
+        // datetime-local inputs expect this exact format
+      }
+      
       el.value = value || '';
       console.log(`[UI] Set form field "${id}" to:`, value);
     } else {

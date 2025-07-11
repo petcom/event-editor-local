@@ -28,6 +28,26 @@ header h1 {
   font-weight: 300;
 }
 
+.server-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.server-label {
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+#currentServer {
+  font-weight: 500;
+  color: #fff;
+}
+
 .auth-section {
   display: flex;
   align-items: center;

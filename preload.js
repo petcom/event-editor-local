@@ -7,12 +7,12 @@ contextBridge.exposeInMainWorld('api', {
   saveEvents: (updatedEvents) => ipcRenderer.invoke('save-events', updatedEvents),
   selectAndProcessImage: (eventToken) => ipcRenderer.invoke('select-and-process-image', eventToken),
   generateTokenPrefix: () => ipcRenderer.invoke('get-mac-token-prefix'),
-  mergeEventsToServer: (token) => ipcRenderer.invoke('merge-events-to-server', token),
+  mergeEventsToServer: (token, serverUrl) => ipcRenderer.invoke('merge-events-to-server', token, serverUrl),
     //login window
   openLoginWindow: () => ipcRenderer.send('open-login-window'),
   // login callback
   ipc: {
-    onAuthToken: (callback) => ipcRenderer.on('auth-token', (_event, token) => callback(token))
+    onAuthToken: (callback) => ipcRenderer.on('auth-token', (_event, token, serverUrl) => callback(token, serverUrl))
     },
   // Path utils
   path: {
@@ -38,4 +38,5 @@ contextBridge.exposeInMainWorld('api', {
 contextBridge.exposeInMainWorld('env', {
   mergeServerURL: process.env.MERGE_SERVER_URL,
   loginAPIEndpoint: process.env.LOGIN_API_ENDPOINT,
+  availableServers: process.env.AVAILABLE_SERVERS,
 });

@@ -1,25 +1,5 @@
 [
   {
-    "id": "20250611-70A3-001",
-    "title": "Chamber Music Party (6/14 2-5pm)",
-    "description": "Members of the Tempe Symphony - Summer Chamber Music Soiree",
-    "long_description": "If you're with the Tempe Symphony RSVP to the eventbrite and come have a great time! Park in whatever spots you find.  Enter through the side door - hopefully we'll have a sign :-)",
-    "event_date": "2025-06-14",
-    "display_from_date": "2025-06-11",
-    "tags": [
-      "sonar",
-      "rlc"
-    ],
-    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-full.png",
-    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-small.png",
-    "thumb_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
-    "group_id": "g1",
-    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
-    "images_uploaded_to_s3": true,
-    "event_updated_not_submitted": false,
-    "ticket_url": ""
-  },
-  {
     "id": "20250519-F325-001",
     "title": "This is a new one",
     "description": "this is new",
@@ -64,59 +44,39 @@
     "title": "Chamber Music Party (7/12 2-5pm)",
     "description": "Members of the Tempe Symphony - Summer Chamber Music Soiree",
     "long_description": "If you're with the Tempe Symphony RSVP to the eventbrite and come have a great time! Park in whatever spots you find.  Enter through the side door - hopefully we'll have a sign :-)",
-    "event_date": "2025-07-12",
-    "display_from_date": "2025-06-11",
+    "event_date": "2025-07-12T17:00",
+    "display_from_date": "2025-06-11T17:00",
     "tags": [
       "sonar",
       "rlc"
     ],
+    "ticket_url": "",
     "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-full.png",
     "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-small.png",
     "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
     "group_id": "g1",
     "images_uploaded_to_s3": true,
-    "event_updated_not_submitted": false,
-    "ticket_url": ""
+    "event_updated_not_submitted": false
   },
   {
     "id": "20250704-B835-001",
     "title": "Chamber Music Party (7/13 2-5pm)",
     "description": "Members of the Tempe Symphony - Summer Chamber Music Soiree",
     "long_description": "If you're with the Tempe Symphony RSVP to the eventbrite and come have a great time! Park in whatever spots you find.  Enter through the side door - hopefully we'll have a sign :-)",
-    "event_date": "2025-07-13",
-    "display_from_date": "2025-06-11",
+    "event_date": "2025-07-13T19:00",
+    "display_from_date": "2025-06-11T20:00",
     "tags": [
       "sonar",
       "rlc",
       "signal-9"
     ],
+    "ticket_url": "https://example.com/tickets",
     "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-full.png",
     "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-small.png",
     "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
     "group_id": "g1",
     "images_uploaded_to_s3": true,
-    "event_updated_not_submitted": false,
-    "ticket_url": ""
-  },
-  {
-    "id": "20250710-B835-001",
-    "title": "Noise to the WORLD 7/11 7pm",
-    "description": "A Night for the Noise-Minded: An Invocation of Sonic Seance",
-    "long_description": "Bring your earplugs — and your willingness for expansion. See the new space is opening its bones to sonic communion, the distortion dreamers, the ones who don't know difference between feedback and serenity.\n\n## On this bill:\n\n- **Bionightmare**\n- **Butch Sonics**\n- **Cymatrian**\n- **Inadrm**\n- **Masochistic Angel**\n- **Project Haruspex**\n\n**$10 tip at the door** — because our machines run on your generosity and a new home for our  cacophony is worth every penny. All proceeds help feed these fresh fanatics, drone freaks, and other sonic mongrels.\n\nCome distort yourself. Come commune with the rest of us.  \nNoise is not dead — it’s just waiting for you to listen.",
-    "event_date": "2025-07-11",
-    "display_from_date": "2025-07-09",
-    "tags": [
-      "sonar",
-      "noise",
-      "expression"
-    ],
-    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250710-B835-001-full.png",
-    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250710-B835-001-small.png",
-    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250710-B835-001-thumb.png",
-    "group_id": "g1",
-    "images_uploaded_to_s3": true,
-    "event_updated_not_submitted": false,
-    "ticket_url": ""
+    "event_updated_not_submitted": true
   },
   {
     "id": "20250519-F325-004",
@@ -192,13 +152,13 @@
       "me",
       "you"
     ],
+    "ticket_url": "https://example.com/tickets",
     "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-003-full.png",
     "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-003-small.png",
     "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-003-thumb.png",
     "group_id": "g1",
     "images_uploaded_to_s3": true,
-    "event_updated_not_submitted": false,
-    "ticket_url": ""
+    "event_updated_not_submitted": true
   },
   {
     "id": "20250519-F325-005",

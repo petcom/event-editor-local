@@ -1,7 +1,6 @@
-
 console.log('[DEBUG] window.api:', window.api);
 
-import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer, syncEventsWithServer } from './events.js';
+import { loadEvents, saveEvent, deleteEvent, addNewEvent, mergeEventsToServer, syncEventsWithServer, setServerUrl } from './events.js';
 import { clearFormWithId, renderEventList, loadEventToForm, lockUIForSync, unlockUIAfterSync, enableFormInputs, updateImagePreview } from './ui.js';
 import { handleImageUpload, syncAllImagesToS3 } from './uploads.js';
 import { getAuthToken, setAuthToken, clearAuthToken } from './auth.js';
@@ -14,12 +13,45 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // Setup auth token handling
   const statusSpan = document.getElementById('serverStatus');
+  const currentServerSpan = document.getElementById('currentServer');
 
-  window.api?.ipc?.onAuthToken?.((token) => {
+  // Initialize server display
+  function updateServerDisplay(serverUrl) {
+    if (currentServerSpan) {
+      // Parse server name from available servers list
+      const availableServers = window.env.availableServers;
+      let serverName = serverUrl;
+      
+      if (availableServers) {
+        const serverPairs = availableServers.split('|');
+        for (let i = 0; i < serverPairs.length; i += 2) {
+          if (i + 1 < serverPairs.length && serverPairs[i + 1] === serverUrl) {
+            serverName = serverPairs[i];
+            break;
+          }
+        }
+      }
+      
+      currentServerSpan.textContent = serverName;
+    }
+  }
+
+  // Set initial server display
+  updateServerDisplay(window.env.mergeServerURL);
+
+  window.api?.ipc?.onAuthToken?.((token, serverUrl) => {
     console.log('[MAIN WINDOW] Token received from main process:', token);
+    console.log('[MAIN WINDOW] Server URL:', serverUrl);
     setAuthToken(token);
     workflowManager.setAuthToken(token);
     if (statusSpan) statusSpan.textContent = 'Logged in';
+    
+    // Update server display with selected server
+    if (serverUrl) {
+      updateServerDisplay(serverUrl);
+      setServerUrl(serverUrl); // Update the events module with new server URL
+    }
+    
     workflowManager.updateButtonStates();
   });
 
@@ -68,6 +100,38 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     renderEventList(events, eventListCallback);
   });
+
+  // Setup automatic marking of events as updated when form fields change
+  function setupFormChangeTracking() {
+    const formFields = [
+      'title', 'description', 'long_description', 'event_date', 
+      'display_from_date', 'tags', 'ticket_url', 'group_id'
+    ];
+    
+    const updateCheckbox = document.getElementById('event_updated_not_submitted');
+    
+    formFields.forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      if (field) {
+        field.addEventListener('input', () => {
+          if (updateCheckbox && !updateCheckbox.checked) {
+            updateCheckbox.checked = true;
+            console.log('[FORM] Automatically marked event as updated due to field change:', fieldId);
+          }
+        });
+        
+        field.addEventListener('change', () => {
+          if (updateCheckbox && !updateCheckbox.checked) {
+            updateCheckbox.checked = true;
+            console.log('[FORM] Automatically marked event as updated due to field change:', fieldId);
+          }
+        });
+      }
+    });
+  }
+
+  // Initialize form change tracking
+  setupFormChangeTracking();
 
   // Setup delete event
   document.getElementById('deleteEventBtn').addEventListener('click', async () => {

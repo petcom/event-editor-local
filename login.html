@@ -6,7 +6,32 @@
   <title>Login</title>
   <style>
     body { font-family: sans-serif; padding: 2rem; }
-    label, input { display: block; margin: 0.5rem 0; }
+    label, input, select { display: block; margin: 0.5rem 0; }
+    select, input { 
+      width: 100%; 
+      padding: 0.5rem; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+      font-size: 1rem;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #5a6fd8;
+    }
+    #loginStatus {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+    }
   </style>
 
 
@@ -14,6 +39,11 @@
 <body>
   <h2>Login</h2>
   <form id="loginForm">
+    <label>Server: 
+      <select id="serverSelect" required>
+        <option value="">Select a server...</option>
+      </select>
+    </label>
     <label>Username: <input type="text" id="username" required /></label>
     <label>Password: <input type="password" id="password" required /></label>
     <button type="submit">Login</button>
@@ -23,12 +53,49 @@
   <script>
      console.log('window.env:', window.env);
 
+    // Populate server dropdown
+    function populateServerDropdown() {
+      const serverSelect = document.getElementById('serverSelect');
+      const availableServers = window.env.availableServers;
+      
+      if (availableServers) {
+        // Parse pipe-delimited format: name|url|name|url
+        const serverPairs = availableServers.split('|');
+        for (let i = 0; i < serverPairs.length; i += 2) {
+          if (i + 1 < serverPairs.length) {
+            const name = serverPairs[i];
+            const url = serverPairs[i + 1];
+            const option = document.createElement('option');
+            option.value = url;
+            option.textContent = name;
+            serverSelect.appendChild(option);
+          }
+        }
+        
+        // Set default selection to current server URL
+        const currentUrl = window.env.mergeServerURL;
+        if (currentUrl) {
+          serverSelect.value = currentUrl;
+        }
+      }
+    }
+
+    // Initialize dropdown on page load
+    document.addEventListener('DOMContentLoaded', populateServerDropdown);
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const user = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
-    //Use env variable for base UR
-      const baseUrl = window.env.mergeServerURL;
+      const selectedServer = document.getElementById('serverSelect').value;
+      
+      if (!selectedServer) {
+        document.getElementById('loginStatus').textContent = 'Please select a server';
+        return;
+      }
+
+      // Use selected server URL
+      const baseUrl = selectedServer;
       const endpoint = window.env.loginAPIEndpoint;
       const url = baseUrl.replace(/\/$/, '') + endpoint;
 
@@ -42,10 +109,9 @@
       const data = await res.json();
       console.log('[LOGIN WINDOW] Token received from server:', data.token);
 
-
      if (data.token) {
-      // ✅ Send token to main process
-        window.loginAPI.sendLoginToken(data.token); // ✅ Use safe bridge
+      // Send both token and selected server info to main process
+        window.loginAPI.sendLoginToken(data.token, selectedServer); 
         window.close();
     } else {
       alert('Login failed');

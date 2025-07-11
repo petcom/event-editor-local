@@ -3,7 +3,56 @@ console.log('[EVENTS] events.js loaded');
 import { generateTokenPrefix } from './token.js';
 import { getAuthToken } from './auth.js';
 
-const BASE_URL = window.env?.mergeServerURL || 'http://localhost:3000';
+let BASE_URL = window.env?.mergeServerURL || 'http://localhost:3000';
+
+/**
+ * Set the base URL for server operations (used when user selects a different server)
+ * @param {string} serverUrl - The new server URL
+ */
+export function setServerUrl(serverUrl) {
+  BASE_URL = serverUrl;
+  console.log('[EVENTS] Server URL updated to:', BASE_URL);
+}
+
+/**
+ * Get the current server URL
+ * @returns {string} The current server URL
+ */
+export function getServerUrl() {
+  return BASE_URL;
+}
+
+/**
+ * Format a datetime-local value for storage.
+ * Converts "YYYY-MM-DDTHH:MM" to "YYYY-MM-DD" for backward compatibility,
+ * or preserves full datetime if time is not 00:00.
+ * @param {string} datetimeValue - The datetime-local input value
+ * @returns {string} The formatted date string
+ */
+function formatDateForStorage(datetimeValue) {
+  if (!datetimeValue) return '';
+  
+  // If it's already just a date (YYYY-MM-DD), return as-is
+  if (datetimeValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    return datetimeValue;
+  }
+  
+  // If it's datetime-local format (YYYY-MM-DDTHH:MM)
+  if (datetimeValue.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
+    const [datePart, timePart] = datetimeValue.split('T');
+    
+    // If time is 00:00, just store the date for backward compatibility
+    if (timePart === '00:00') {
+      return datePart;
+    }
+    
+    // Otherwise, store the full datetime (you may want to adjust this based on your needs)
+    return datetimeValue;
+  }
+  
+  // Fallback: return as-is
+  return datetimeValue;
+}
 
 /**
  * Load events from the local events.json file.
@@ -34,8 +83,8 @@ export async function saveEvent(events) {
     title: document.getElementById('title').value,
     description: document.getElementById('description').value,
     long_description: document.getElementById('long_description').value,
-    event_date: document.getElementById('event_date').value,
-    display_from_date: document.getElementById('display_from_date').value,
+    event_date: formatDateForStorage(document.getElementById('event_date').value),
+    display_from_date: formatDateForStorage(document.getElementById('display_from_date').value),
     tags: document.getElementById('tags').value.split(',').map(t => t.trim()),
     ticket_url: document.getElementById('ticket_url').value,
     full_image_url: document.getElementById('full_image_url').value,
@@ -134,7 +183,8 @@ export async function mergeEventsToServer() {
   }
 
   try {
-    const result = await window.api.mergeEventsToServer(token);
+    // Pass current server URL to backend
+    const result = await window.api.mergeEventsToServer(token, BASE_URL);
     return result;
   } catch (err) {
     console.error('[EVENTS] Merge failed from renderer:', err);

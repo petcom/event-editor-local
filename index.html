@@ -9,6 +9,10 @@
 
   <header>
     <h1>Event Editor</h1>
+    <div class="server-info">
+      <span class="server-label">Server:</span>
+      <span id="currentServer">Not connected</span>
+    </div>
     <div class="auth-section">
       <button id="loginBtn">🔐 Login</button>
       <span id="serverStatus">Not logged in</span>
@@ -50,8 +54,8 @@
             <label>Group ID: <input type="text" id="group_id" /></label>
           </div>
           <div class="form-group">
-            <label>Event Date: <input type="date" id="event_date" required /></label>
-            <label>Display From Date: <input type="date" id="display_from_date" required /></label>
+            <label>Event Date: <input type="datetime-local" id="event_date" required /></label>
+            <label>Display From Date: <input type="datetime-local" id="display_from_date" required /></label>
           </div>
           <div class="form-group">
             <label>Tags (comma-separated): <input type="text" id="tags" /></label>
