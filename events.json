@@ -14,59 +14,210 @@
     "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-small.png",
     "thumb_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
     "group_id": "g1",
-    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png"
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
   },
   {
-    "id": "20250625-B835-001",
-    "title": "Test event 2",
-    "description": "Here's a Test event",
-    "long_description": "Here's a test event",
-    "event_date": "2025-06-28",
-    "display_from_date": "2025-06-25",
+    "id": "20250519-F325-001",
+    "title": "This is a new one",
+    "description": "this is new",
+    "long_description": "this is more new",
+    "event_date": "2025-05-20",
+    "display_from_date": "2025-05-19",
     "tags": [
       "sonar",
-      "public",
-      "music"
+      "beefy"
     ],
-    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-001-full.png",
-    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-001-small.png",
-    "thumb_url": "./images/20250625-B835-001-thumb.png",
     "group_id": "g1",
-    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-001-thumb.png"
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-001-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-001-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-001-thumb.png",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
   },
   {
-    "id": "20250625-B835-002",
-    "title": "Test event 3",
-    "description": "Here's a Test event 3",
-    "long_description": "Here's a test event 3",
-    "event_date": "2025-06-29",
-    "display_from_date": "2025-06-25",
+    "id": "20250520-F325-001",
+    "title": "test event",
+    "description": "dest tescription",
+    "long_description": "heres a long one",
+    "event_date": "2025-05-24",
+    "display_from_date": "2025-05-20",
     "tags": [
       "sonar",
-      "public",
-      "music"
+      "test",
+      "me",
+      "you"
     ],
-    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-002-full.png",
-    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-002-small.png",
-    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-002-thumb.png",
-    "group_id": "g1"
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250520-F325-001-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250520-F325-001-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250520-F325-001-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
   },
   {
-    "id": "20250625-B835-003",
-    "title": "Test Event 4",
-    "description": "Test Event 4 is the bomb",
-    "long_description": "Test Event 4 is the bomb",
-    "event_date": "2025-06-30",
-    "display_from_date": "2025-06-25",
+    "id": "20250611-70A3-002",
+    "title": "Chamber Music Party (7/12 2-5pm)",
+    "description": "Members of the Tempe Symphony - Summer Chamber Music Soiree",
+    "long_description": "If you're with the Tempe Symphony RSVP to the eventbrite and come have a great time! Park in whatever spots you find.  Enter through the side door - hopefully we'll have a sign :-)",
+    "event_date": "2025-07-12",
+    "display_from_date": "2025-06-11",
     "tags": [
       "sonar",
-      "public",
-      "music",
-      "center"
+      "rlc"
     ],
-    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-003-full.png",
-    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-003-small.png",
-    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250625-B835-003-thumb.png",
-    "group_id": "g1"
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
+  },
+  {
+    "id": "20250704-B835-001",
+    "title": "Chamber Music Party (7/13 2-5pm)",
+    "description": "Members of the Tempe Symphony - Summer Chamber Music Soiree",
+    "long_description": "If you're with the Tempe Symphony RSVP to the eventbrite and come have a great time! Park in whatever spots you find.  Enter through the side door - hopefully we'll have a sign :-)",
+    "event_date": "2025-07-13",
+    "display_from_date": "2025-06-11",
+    "tags": [
+      "sonar",
+      "rlc",
+      "signal-9"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250611-70A3-001-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
+  },
+  {
+    "id": "20250710-B835-001",
+    "title": "Noise to the WORLD 7/11 7pm",
+    "description": "A Night for the Noise-Minded: An Invocation of Sonic Seance",
+    "long_description": "Bring your earplugs — and your willingness for expansion. See the new space is opening its bones to sonic communion, the distortion dreamers, the ones who don't know difference between feedback and serenity.\n\n## On this bill:\n\n- **Bionightmare**\n- **Butch Sonics**\n- **Cymatrian**\n- **Inadrm**\n- **Masochistic Angel**\n- **Project Haruspex**\n\n**$10 tip at the door** — because our machines run on your generosity and a new home for our  cacophony is worth every penny. All proceeds help feed these fresh fanatics, drone freaks, and other sonic mongrels.\n\nCome distort yourself. Come commune with the rest of us.  \nNoise is not dead — it’s just waiting for you to listen.",
+    "event_date": "2025-07-11",
+    "display_from_date": "2025-07-09",
+    "tags": [
+      "sonar",
+      "noise",
+      "expression"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250710-B835-001-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250710-B835-001-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250710-B835-001-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
+  },
+  {
+    "id": "20250519-F325-004",
+    "title": "New Event 4",
+    "description": "New Event",
+    "long_description": "New Event here",
+    "event_date": "2025-05-21",
+    "display_from_date": "2025-05-19",
+    "tags": [
+      "sonar",
+      "this",
+      "that"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-004-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-004-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-004-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
+  },
+  {
+    "id": "20250521-F325-001",
+    "title": "Test Event 3",
+    "description": "New event 3",
+    "long_description": "New Test Event 3",
+    "event_date": "2025-05-21",
+    "display_from_date": "2025-05-20",
+    "tags": [
+      "sonar",
+      "test",
+      "you",
+      "me"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250521-F325-001-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250521-F325-001-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250521-F325-001-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
+  },
+  {
+    "id": "20250519-F325-002",
+    "title": "New Title",
+    "description": "new Description",
+    "long_description": "here's a longer description",
+    "event_date": "2025-05-23",
+    "display_from_date": "2025-05-20",
+    "tags": [
+      "sonar",
+      "beefy",
+      "bigone"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-002-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-002-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-002-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
+  },
+  {
+    "id": "20250519-F325-003",
+    "title": "New event Trois",
+    "description": "New Event Here People",
+    "long_description": "Here's a new event",
+    "event_date": "2025-05-23",
+    "display_from_date": "2025-05-19",
+    "tags": [
+      "sonar",
+      "test",
+      "me",
+      "you"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-003-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-003-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-003-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
+  },
+  {
+    "id": "20250519-F325-005",
+    "title": "New Event 5",
+    "description": "Test Event",
+    "long_description": "Test Event Description",
+    "event_date": "2025-05-24",
+    "display_from_date": "2025-05-20",
+    "tags": [
+      "sonar",
+      "this",
+      "that"
+    ],
+    "full_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-005-full.png",
+    "small_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-005-small.png",
+    "thumb_image_url": "https://sonar-media.sfo3.digitaloceanspaces.com/images/20250519-F325-005-thumb.png",
+    "group_id": "g1",
+    "images_uploaded_to_s3": true,
+    "event_updated_not_submitted": false,
+    "ticket_url": ""
   }
 ]

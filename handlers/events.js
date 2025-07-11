@@ -62,6 +62,16 @@ module.exports = function registerEventHandlers() {
       const data = fs.readFileSync(eventsPath, 'utf-8');
       const localEvents = JSON.parse(data);
 
+      // Only send events that need to be submitted
+      const eventsToSubmit = localEvents.filter(event => event.event_updated_not_submitted === true);
+      
+      if (eventsToSubmit.length === 0) {
+        console.log('[EVENTS] No events to submit');
+        return { success: true, total: 0, message: 'No events to submit' };
+      }
+
+      console.log(`[EVENTS] Submitting ${eventsToSubmit.length} events to server`);
+
       let retries = 0;
       let response, result;
 
@@ -72,7 +82,7 @@ module.exports = function registerEventHandlers() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ events: localEvents })
+          body: JSON.stringify({ events: eventsToSubmit })
         });
 
         result = await response.json();

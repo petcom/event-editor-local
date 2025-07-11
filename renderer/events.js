@@ -37,10 +37,13 @@ export async function saveEvent(events) {
     event_date: document.getElementById('event_date').value,
     display_from_date: document.getElementById('display_from_date').value,
     tags: document.getElementById('tags').value.split(',').map(t => t.trim()),
+    ticket_url: document.getElementById('ticket_url').value,
     full_image_url: document.getElementById('full_image_url').value,
     small_image_url: document.getElementById('small_image_url').value,
     thumb_image_url: document.getElementById('thumb_image_url').value,
-    group_id: document.getElementById('group_id').value
+    group_id: document.getElementById('group_id').value,
+    images_uploaded_to_s3: document.getElementById('images_uploaded_to_s3').checked,
+    event_updated_not_submitted: true // Always mark as updated when saving
   };
 
   console.log('[EVENTS] Saving event:', updatedEvent);
@@ -111,7 +114,12 @@ export async function addNewEvent(events) {
   const newId = `${prefix}-${String(todayEvents.length + 1).padStart(3, '0')}`;
 
   console.log('[EVENTS] Generated new event ID:', newId);
-  return { id: newId };
+  return { 
+    id: newId,
+    ticket_url: '',
+    images_uploaded_to_s3: false,
+    event_updated_not_submitted: true
+  };
 }
 
 /**

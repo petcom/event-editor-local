@@ -1,15 +1,31 @@
 export function lockUIForSync() {
+  console.log('[UI] Locking UI for sync operation');
+  
+  const eventList = document.getElementById('eventList');
   const form = document.getElementById('eventForm');
-  const list = document.getElementById('eventList');
+  const buttons = document.querySelectorAll('button');
+  
+  if (eventList) eventList.classList.add('locked');
   if (form) form.classList.add('locked');
-  if (list) list.classList.add('locked');
+  
+  buttons.forEach(btn => {
+    btn.disabled = true;
+  });
 }
 
 export function unlockUIAfterSync() {
+  console.log('[UI] Unlocking UI after sync operation');
+  
+  const eventList = document.getElementById('eventList');
   const form = document.getElementById('eventForm');
-  const list = document.getElementById('eventList');
+  const buttons = document.querySelectorAll('button');
+  
+  if (eventList) eventList.classList.remove('locked');
   if (form) form.classList.remove('locked');
-  if (list) list.classList.remove('locked');
+  
+  buttons.forEach(btn => {
+    btn.disabled = false;
+  });
 }
 
 export function enableFormInputs() {
@@ -22,7 +38,7 @@ export function clearFormWithId(newId) {
 
   const fields = [
     'id', 'title', 'description', 'long_description',
-    'event_date', 'display_from_date', 'tags',
+    'event_date', 'display_from_date', 'tags', 'ticket_url',
     'full_image_url', 'small_image_url', 'thumb_image_url', 'group_id'
   ];
 
@@ -36,6 +52,19 @@ export function clearFormWithId(newId) {
     }
   });
 
+  // Clear checkboxes
+  const checkbox = document.getElementById('images_uploaded_to_s3');
+  if (checkbox) {
+    checkbox.checked = false;
+    console.log('[UI] Cleared checkbox: images_uploaded_to_s3');
+  }
+
+  const eventUpdatedCheckbox = document.getElementById('event_updated_not_submitted');
+  if (eventUpdatedCheckbox) {
+    eventUpdatedCheckbox.checked = false;
+    console.log('[UI] Cleared checkbox: event_updated_not_submitted');
+  }
+
   const idEl = document.getElementById('id');
   if (idEl) {
     idEl.value = newId;
@@ -43,9 +72,12 @@ export function clearFormWithId(newId) {
   } else {
     console.warn('[UI] Could not set new ID — #id element not found');
   }
+
+  // Clear image preview
+  clearImagePreview();
 }
 
-export function renderEventList(events, onClick) {
+export function renderEventList(events, onClickCallback) {
   console.log('[UI] Rendering event list. Count:', events.length);
 
   const list = document.getElementById('eventList');
@@ -58,11 +90,19 @@ export function renderEventList(events, onClick) {
 
   events.forEach((evt, i) => {
     const li = document.createElement('li');
-    li.textContent = `${evt.event_date}: ${evt.title}`;
-    li.addEventListener('click', () => {
+    let displayText = `${evt.event_date}: ${evt.title}`;
+    
+    // Add indicator for events that need to be submitted
+    if (evt.event_updated_not_submitted) {
+      displayText += ' 🔄';
+      li.classList.add('event-updated');
+    }
+    
+    li.textContent = displayText;
+    li.addEventListener('click', (event) => {
       if (!list.classList.contains('locked')) {
         console.log('[UI] Event clicked:', evt.id, 'at index', i);
-        onClick(evt);
+        onClickCallback(evt);
       }
     });
     list.appendChild(li);
@@ -95,56 +135,68 @@ export function loadEventToForm(evt) {
   assign('event_date', evt.event_date);
   assign('display_from_date', evt.display_from_date);
   assign('tags', evt.tags.join(', '));
+  assign('ticket_url', evt.ticket_url);
   assign('full_image_url', evt.full_image_url);
   assign('small_image_url', evt.small_image_url);
   assign('thumb_image_url', evt.thumb_image_url);
   assign('group_id', evt.group_id);
+
+  // Handle checkboxes
+  const checkbox = document.getElementById('images_uploaded_to_s3');
+  if (checkbox) {
+    checkbox.checked = evt.images_uploaded_to_s3 || false;
+    console.log('[UI] Set checkbox images_uploaded_to_s3 to:', evt.images_uploaded_to_s3);
+  }
+
+  const eventUpdatedCheckbox = document.getElementById('event_updated_not_submitted');
+  if (eventUpdatedCheckbox) {
+    eventUpdatedCheckbox.checked = evt.event_updated_not_submitted || false;
+    console.log('[UI] Set checkbox event_updated_not_submitted to:', evt.event_updated_not_submitted);
+  }
+
+  // Update image preview
+  updateImagePreview(evt);
 }
 
+export function updateImagePreview(evt) {
+  const preview = document.getElementById('eventImagePreview');
+  if (!preview) return;
 
-export function setupMergeButton(events, getAuthToken) {
-  const button = document.getElementById('mergeButton');
-  const status = document.getElementById('mergeStatus');
-
-  if (!button || !status) {
-    console.warn('[UI] Merge button or status area not found');
-    return;
+  // Try to get the best image URL available - prioritize small_image_url
+  let imageUrl = null;
+  
+  // Prioritize small_image_url first
+  if (evt.small_image_url) {
+    imageUrl = evt.small_image_url;
+  } else if (evt.thumb_image_url) {
+    imageUrl = evt.thumb_image_url;
+  } else if (evt.full_image_url) {
+    imageUrl = evt.full_image_url;
   }
 
-  async function attemptMerge(token) {
-    status.textContent = '🔄 Attempting to merge events...';
-    button.disabled = true;
-    lockUIForSync();
-
-    try {
-      const result = await window.api.mergeEventsToServer(token);
-      if (result.status === 423) {
-        status.textContent = '⏳ Merge is locked. Retrying in 10 seconds...';
-        setTimeout(() => attemptMerge(token), 10000);
-        return;
-      }
-
-      if (result.success) {
-        status.textContent = `✅ Merge successful! ${result.total} events on server.`;
-      } else {
-        status.textContent = `❌ Merge failed: ${result.error || 'Unknown error'}`;
-      }
-    } catch (error) {
-      console.error('[MERGE ERROR]', error);
-      status.textContent = `❌ Unexpected error: ${error.message}`;
-    } finally {
-      button.disabled = false;
-      unlockUIAfterSync();
-    }
+  if (imageUrl) {
+    preview.src = imageUrl;
+    preview.classList.add('visible');
+    preview.title = `Image: ${imageUrl}`;
+    console.log('[UI] Set image preview to:', imageUrl);
+    
+    // Handle image load errors
+    preview.onerror = () => {
+      console.warn('[UI] Failed to load image:', imageUrl);
+      preview.classList.remove('visible');
+    };
+  } else {
+    preview.classList.remove('visible');
+    preview.title = '';
+    console.log('[UI] No image URL available for preview');
   }
+}
 
-  button.addEventListener('click', async () => {
-    const token = await getAuthToken();
-    if (!token) {
-    console.error('[UI] No auth token available');
-    status.textContent = '❌ Cannot merge: not logged in.';
-    return;
-    }
-    attemptMerge(token);
-  });
+export function clearImagePreview() {
+  const preview = document.getElementById('eventImagePreview');
+  if (preview) {
+    preview.src = '';
+    preview.classList.remove('visible');
+    console.log('[UI] Cleared image preview');
+  }
 }

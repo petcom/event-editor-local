@@ -9,50 +9,115 @@
 
   <header>
     <h1>Event Editor</h1>
-    <button id="loginBtn">🔐 Login</button>
-    <span id="serverStatus">Not logged in</span>
+    <div class="auth-section">
+      <button id="loginBtn">🔐 Login</button>
+      <span id="serverStatus">Not logged in</span>
+    </div>
   </header>
 
   <main>
     <!-- Event List Section -->
-    <section>
+    <section class="event-list-section">
       <h2>Event List</h2>
       <ul id="eventList"></ul>
     </section>
 
-    <!-- Edit Event Section -->
-    <section>
-      <h2>Edit Event</h2>
-      <form id="eventForm">
-        <label>ID: <input type="text" id="id" readonly /></label><br />
-        <label>Title: <input type="text" id="title" /></label><br />
-        <label>Description: <input type="text" id="description" /></label><br />
-        <label>Long Description: <textarea id="long_description"></textarea></label><br />
-        <label>Event Date: <input type="date" id="event_date" /></label><br />
-        <label>Display From Date: <input type="date" id="display_from_date" /></label><br />
-        <label>Tags (comma-separated): <input type="text" id="tags" /></label><br />
-        <label>Full Image URL: <input type="text" id="full_image_url" /></label><br />
-        <label>Small Image URL: <input type="text" id="small_image_url" /></label><br />
-        <label>Thumbnail URL: <input type="text" id="thumb_image_url" /></label><br />
-        <label>Group ID: <input type="text" id="group_id" /></label><br />
-
-        <div style="margin-top: 1rem;">
+    <!-- Workflow Section -->
+    <section class="workflow-section">
+      <h2>Event Workflow</h2>
+      
+      <!-- Step 1: Create/Edit Event -->
+      <div class="workflow-step" id="step1">
+        <h3>📝 Step 1: Create/Edit Event</h3>
+        <div class="step-actions">
           <button id="addEventBtn" type="button">➕ New Event</button>
-          <button id="uploadImageBtn" type="button">🖼️ Add Image</button>
-          <button type="submit">💾 Save Changes</button>
           <button id="copyEventBtn" type="button">📄 Copy Event</button>
+          <button id="deleteEventBtn" type="button" class="danger">🗑️ Delete Event</button>
         </div>
-      </form>
-    </section>
+        <div class="step-status" id="step1Status">Select or create an event to begin</div>
+      </div>
 
-    <!-- Bottom Controls -->
-    <section style="margin-top: 2rem;">
-      <button id="deleteEventBtn" type="button" style="background-color: red; color: white;">🗑️ Delete Event</button>
-      <button id="mergeButton">📤 Merge Events to Server</button>
-      <button id="syncImagesBtn" class="btn btn-primary">🖼️ Sync Images to S3</button>
-      <button id="syncEventsBtn">🔄 Sync Events with Server</button>
+      <!-- Step 2: Fill Event Details -->
+      <div class="workflow-step" id="step2">
+        <h3>📋 Step 2: Fill Event Details</h3>
+        <form id="eventForm">
+          <div class="form-group">
+            <label>ID: <input type="text" id="id" readonly /></label>
+            <label>Title: <input type="text" id="title" required /></label>
+          </div>
+          <div class="form-group">
+            <label>Description: <input type="text" id="description" required /></label>
+            <label>Group ID: <input type="text" id="group_id" /></label>
+          </div>
+          <div class="form-group">
+            <label>Event Date: <input type="date" id="event_date" required /></label>
+            <label>Display From Date: <input type="date" id="display_from_date" required /></label>
+          </div>
+          <div class="form-group">
+            <label>Tags (comma-separated): <input type="text" id="tags" /></label>
+          </div>
+          <div class="form-group">
+            <label>Ticket URL: <input type="url" id="ticket_url" placeholder="https://example.com/tickets" /></label>
+          </div>
+          <div class="form-group">
+            <label>Long Description: <textarea id="long_description" rows="3"></textarea></label>
+          </div>
+          <div class="form-group">
+            <label>Full Image URL: <input type="text" id="full_image_url" readonly /></label>
+            <label>Small Image URL: <input type="text" id="small_image_url" readonly /></label>
+            <label>Thumbnail URL: <input type="text" id="thumb_image_url" readonly /></label>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="images_uploaded_to_s3" />
+              <span>Images Uploaded to S3</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="event_updated_not_submitted" />
+              <span>Event Updated (Not Submitted)</span>
+            </label>
+          </div>
+          <div class="step-actions">
+            <button type="submit">💾 Save Changes</button>
+          </div>
+        </form>
+        <div class="image-preview-container">
+          <img id="eventImagePreview" class="event-image-preview" alt="Event Image Preview" />
+        </div>
+        <div class="step-status" id="step2Status">Fill in event details and save</div>
+      </div>
 
-      <div id="mergeStatus" style="margin-top: 1em; font-family: monospace; color: #333;"></div>
+      <!-- Step 3: Add Images -->
+      <div class="workflow-step" id="step3">
+        <h3>🖼️ Step 3: Add Images</h3>
+        <div class="step-actions">
+          <button id="uploadImageBtn" type="button">� Select & Process Image</button>
+        </div>
+        <div class="step-status" id="step3Status">Add images to your event</div>
+      </div>
+
+      <!-- Step 4: Upload Images to S3 -->
+      <div class="workflow-step" id="step4">
+        <h3>☁️ Step 4: Upload Images to S3</h3>
+        <div class="step-actions">
+          <button id="syncImagesBtn" type="button">� Upload Images to S3</button>
+        </div>
+        <div class="step-status" id="step4Status">Upload local images to cloud storage</div>
+      </div>
+
+      <!-- Step 5: Sync with Server -->
+      <div class="workflow-step" id="step5">
+        <h3>🔄 Step 5: Sync with Server</h3>
+        <div class="step-actions">
+          <button id="mergeButton">📤 Push Events to Server</button>
+          <button id="syncEventsBtn">� Sync Events with Server</button>
+        </div>
+        <div class="step-status" id="step5Status">Synchronize with remote server</div>
+      </div>
+
+      <div id="mergeStatus" class="status-area"></div>
     </section>
   </main>
 
