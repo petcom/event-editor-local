@@ -20,14 +20,29 @@
   </header>
 
   <main>
-    <!-- Event List Section -->
-    <section class="event-list-section">
-      <h2>Event List</h2>
-      <ul id="eventList"></ul>
-    </section>
+    <!-- Left Column: Event List + Stock Images -->
+    <div class="left-column">
+      <!-- Event List Section -->
+      <section class="event-list-section">
+        <h2>Event List</h2>
+        <ul id="eventList"></ul>
+      </section>
 
-    <!-- Workflow Section -->
-    <section class="workflow-section">
+      <!-- Stock Images Section -->
+      <section class="stock-images-section">
+        <h3>📷 Available Default Stock Images</h3>
+        <div class="stock-images-container">
+          <div id="stockImagesList" class="stock-images-horizontal">
+            <div class="loading-message">🔄 Loading stock images...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Right Column: Workflow -->
+    <div class="right-column">
+      <!-- Workflow Section -->
+      <section class="workflow-section">
       <h2>Event Workflow</h2>
       
       <!-- Step 1: Create/Edit Event -->
@@ -67,9 +82,9 @@
             <label>Long Description: <textarea id="long_description" rows="3"></textarea></label>
           </div>
           <div class="form-group">
-            <label>Full Image URL: <input type="text" id="full_image_url" readonly /></label>
-            <label>Small Image URL: <input type="text" id="small_image_url" readonly /></label>
-            <label>Thumbnail URL: <input type="text" id="thumb_image_url" readonly /></label>
+            <label>Full Image URL: <input type="text" id="full_image_url" placeholder="Auto-filled by image upload or stock images" /></label>
+            <label>Small Image URL: <input type="text" id="small_image_url" placeholder="Auto-filled by image upload or stock images" /></label>
+            <label>Thumbnail URL: <input type="text" id="thumb_image_url" placeholder="Auto-filled by image upload or stock images" /></label>
           </div>
           <div class="form-group">
             <label class="checkbox-label">
@@ -123,6 +138,7 @@
 
       <div id="mergeStatus" class="status-area"></div>
     </section>
+    </div> <!-- End Right Column -->
   </main>
 
   <script type="module" src="renderer/index.js"></script>

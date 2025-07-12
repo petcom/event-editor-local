@@ -5,6 +5,7 @@ import { clearFormWithId, renderEventList, loadEventToForm, lockUIForSync, unloc
 import { handleImageUpload, syncAllImagesToS3 } from './uploads.js';
 import { getAuthToken, setAuthToken, clearAuthToken } from './auth.js';
 import { workflowManager } from './workflow.js';
+import { initializeStockImages } from './stock-images.js';
 
 let events = [];
 
@@ -50,10 +51,95 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (serverUrl) {
       updateServerDisplay(serverUrl);
       setServerUrl(serverUrl); // Update the events module with new server URL
+      
+      // Automatically sync events with the new server
+      syncEventsAfterServerChange(serverUrl);
     }
     
     workflowManager.updateButtonStates();
   });
+
+  // Function to sync events when server changes
+  async function syncEventsAfterServerChange(newServerUrl) {
+    console.log('[SERVER CHANGE] Syncing events with new server:', newServerUrl);
+    
+    try {
+      // Show loading indicators
+      const eventList = document.getElementById('eventList');
+      if (eventList) {
+        eventList.innerHTML = '<li style="color: #666; font-style: italic;">🔄 Loading events from server...</li>';
+      }
+      
+      // Update status to show syncing
+      if (statusSpan) {
+        statusSpan.textContent = 'Syncing events...';
+      }
+      
+      // Sync with the new server
+      const result = await syncEventsWithServer();
+      
+      if (result.success) {
+        // Update local events array and UI
+        events = result.updated;
+        workflowManager.setEvents(events);
+        
+        // Clear current form and selection
+        clearFormWithId('');
+        workflowManager.setCurrentEvent(null);
+        
+        // Re-render event list with new events
+        renderEventList(events, eventListCallback);
+        
+        // Update status back to logged in
+        if (statusSpan) {
+          statusSpan.textContent = 'Logged in';
+        }
+        
+        // Show success message
+        workflowManager.showValidationMessage(
+          `✅ Switched to server and loaded ${events.length} events`, 
+          'success'
+        );
+        
+        console.log(`[SERVER CHANGE] Successfully loaded ${events.length} events from new server`);
+      } else {
+        // If sync fails, just load local events
+        events = await loadEvents();
+        workflowManager.setEvents(events);
+        renderEventList(events, eventListCallback);
+        
+        // Update status back to logged in
+        if (statusSpan) {
+          statusSpan.textContent = 'Logged in';
+        }
+        
+        workflowManager.showValidationMessage(
+          `⚠️ Connected to server but couldn't sync events: ${result.error}`, 
+          'warning'
+        );
+      }
+    } catch (error) {
+      console.error('[SERVER CHANGE] Error syncing events:', error);
+      
+      // Fallback to loading local events
+      events = await loadEvents();
+      workflowManager.setEvents(events);
+      renderEventList(events, eventListCallback);
+      
+      // Update status back to logged in
+      if (statusSpan) {
+        statusSpan.textContent = 'Logged in';
+      }
+      
+      workflowManager.showValidationMessage(
+        `⚠️ Connected to server but couldn't load events: ${error.message}`, 
+        'warning'
+      );
+    }
+    
+    // Update button states
+    workflowManager.updateButtonStates();
+  }
 
   // Setup login button
   const loginBtn = document.getElementById('loginBtn');
@@ -83,6 +169,15 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   renderEventList(events, eventListCallback);
 
+  // Initialize stock images
+  console.log('[DEBUG] About to initialize stock images...');
+  try {
+    await initializeStockImages();
+    console.log('[DEBUG] Stock images initialized successfully');
+  } catch (error) {
+    console.error('[DEBUG] Error initializing stock images:', error);
+  }
+
   // Setup event form submission
   document.getElementById('eventForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -105,7 +200,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   function setupFormChangeTracking() {
     const formFields = [
       'title', 'description', 'long_description', 'event_date', 
-      'display_from_date', 'tags', 'ticket_url', 'group_id'
+      'display_from_date', 'tags', 'ticket_url', 'group_id',
+      'full_image_url', 'small_image_url', 'thumb_image_url'
     ];
     
     const updateCheckbox = document.getElementById('event_updated_not_submitted');
