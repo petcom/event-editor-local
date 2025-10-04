@@ -1,0 +1,202 @@
+{
+  "version": "1.0",
+  "baseUrl": "https://sonar-media.sfo3.cdn.digitaloceanspaces.com/images/",
+  "lastUpdated": "2025-10-02",
+  "images": [
+    {
+      "id": "zzz-bass-guitar",
+      "name": "Bass Guitar",
+      "category": "instruments",
+      "format": "png"
+    },
+    {
+      "id": "zzz-dance-couple-street",
+      "name": "Dance Couple Street",
+      "category": "dance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-dance-exercize-group",
+      "name": "Dance Exercise Group",
+      "category": "dance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-dance-people-sunset",
+      "name": "Dance People Sunset",
+      "category": "dance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-dance-salsa-blur",
+      "name": "Dance Salsa Blur",
+      "category": "dance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-dance-seated-couple",
+      "name": "Dance Seated Couple",
+      "category": "dance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-edm-glow",
+      "name": "EDM Glow",
+      "category": "electronic",
+      "format": "png"
+    },
+    {
+      "id": "zzz-flute-hands",
+      "name": "Flute Hands",
+      "category": "instruments",
+      "format": "png"
+    },
+    {
+      "id": "zzz-french-horn",
+      "name": "French Horn",
+      "category": "instruments",
+      "format": "png"
+    },
+    {
+      "id": "zzz-gear-tube",
+      "name": "Gear Tube",
+      "category": "equipment",
+      "format": "png"
+    },
+    {
+      "id": "zzz-group-horse-public",
+      "name": "Group Horse Public",
+      "category": "performance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-group-horsies",
+      "name": "Group Horsies",
+      "category": "performance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-jazz-combo",
+      "name": "Jazz Combo",
+      "category": "performance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-sax-group",
+      "name": "Saxophone Group",
+      "category": "performance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-steinwayhands",
+      "name": "Steinway Hands",
+      "category": "instruments",
+      "format": "png"
+    },
+    {
+      "id": "zzz-string-section",
+      "name": "String Section",
+      "category": "performance",
+      "format": "png"
+    },
+    {
+      "id": "zzz-synth-buttonswave",
+      "name": "Synth Buttons Wave",
+      "category": "electronic",
+      "format": "png"
+    },
+    {
+      "id": "zzz-synth-dj-turntables",
+      "name": "DJ Turntables",
+      "category": "electronic",
+      "format": "png"
+    },
+    {
+      "id": "zzz-synth-keys-rack",
+      "name": "Synth Keys Rack",
+      "category": "electronic",
+      "format": "png"
+    },
+    {
+      "id": "zzz-synth-pedals-2",
+      "name": "Synth Pedals 2",
+      "category": "equipment",
+      "format": "png"
+    },
+    {
+      "id": "zzz-synth-pedals",
+      "name": "Synth Pedals",
+      "category": "equipment",
+      "format": "png"
+    },
+    {
+      "id": "zzz-synth-vuemeter",
+      "name": "Synth VU Meter",
+      "category": "equipment",
+      "format": "png"
+    },
+    {
+      "id": "zzz-synth-wires-devices",
+      "name": "Synth Wires Devices",
+      "category": "equipment",
+      "format": "png"
+    },
+    {
+      "id": "zzz-synth-wires",
+      "name": "Synth Wires",
+      "category": "equipment",
+      "format": "png"
+    },
+    {
+      "id": "zzz-venue-club-green",
+      "name": "Venue Club Green",
+      "category": "venues",
+      "format": "png"
+    },
+    {
+      "id": "zzz-violin-butterfly",
+      "name": "Violin Butterfly",
+      "category": "instruments",
+      "format": "png"
+    }
+  ],
+  "categories": {
+    "dance": {
+      "name": "Dance",
+      "description": "Dance performances and events",
+      "icon": "💃"
+    },
+    "instruments": {
+      "name": "Instruments",
+      "description": "Musical instruments close-ups",
+      "icon": "🎸"
+    },
+    "electronic": {
+      "name": "Electronic/DJ",
+      "description": "Electronic music and DJ equipment",
+      "icon": "🎹"
+    },
+    "equipment": {
+      "name": "Equipment",
+      "description": "Music equipment and gear",
+      "icon": "🎛️"
+    },
+    "performance": {
+      "name": "Performance",
+      "description": "Live performances and ensembles",
+      "icon": "🎼"
+    },
+    "venues": {
+      "name": "Venues",
+      "description": "Concert halls and performance spaces",
+      "icon": "🎪"
+    }
+  },
+  "notes": [
+    "All stock images use the 'zzz-' prefix",
+    "Each image has 3 size variants: -full.png, -small.png, -thumb.png",
+    "Images are stored in the 'images/' folder of the CDN",
+    "To add new stock images: upload all 3 sizes to CDN and add entry to this manifest",
+    "Format can be 'png' or 'jpg' - specify in the format field"
+  ]
+}

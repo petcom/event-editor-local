@@ -1,61 +1,63 @@
 console.log('[STOCK-IMAGES] stock-images.js loaded');
 console.log('[STOCK-IMAGES] Module initialization starting...');
 
-const S3_BASE_URL = 'https://sonar-media.sfo3.digitaloceanspaces.com/images/';
+const S3_BASE_URL = 'https://sonar-media.sfo3.cdn.digitaloceanspaces.com/images/';
 
 /**
- * Fetch list of stock images from S3 CDN
- * @returns {Promise<string[]>} Array of image URLs
+ * Load stock images manifest from JSON file
+ * @returns {Promise<Array>} Array of stock image definitions
+ */
+async function loadStockImagesManifest() {
+  try {
+    console.log('[STOCK-IMAGES] Loading manifest file...');
+    const manifest = await window.api.loadStockImagesManifest();
+    
+    console.log(`[STOCK-IMAGES] Manifest loaded: ${manifest.images.length} images defined`);
+    console.log(`[STOCK-IMAGES] Base URL from manifest: ${manifest.baseUrl}`);
+    
+    return manifest.images;
+  } catch (error) {
+    console.error('[STOCK-IMAGES] Error loading manifest:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch list of stock images from manifest
+ * @returns {Promise<Array>} Array of valid image objects
  */
 async function fetchStockImagesList() {
   try {
-    console.log('[STOCK-IMAGES] Fetching stock images from S3...');
+    console.log('[STOCK-IMAGES] Fetching stock images from manifest...');
     
-    // Comprehensive list of potential stock images
-    // This list can be expanded as more stock images are added to S3
-    const stockImageBasenames = [
-      'zzz-default-sunset',
-      'zzz-default-ocean', 
-      'zzz-default-mountain',
-      'zzz-default-forest',
-      'zzz-default-city',
-      'zzz-default-abstract',
-      'zzz-default-technology',
-      'zzz-default-nature',
-      'zzz-default-business',
-      'zzz-default-event',
-      'zzz-default-conference',
-      'zzz-default-workshop',
-      'zzz-default-seminar',
-      'zzz-default-meeting',
-      'zzz-default-celebration',
-      'zzz-default-education',
-      'zzz-default-training',
-      'zzz-default-webinar'
-    ];
+    // Load manifest file
+    const manifestImages = await loadStockImagesManifest();
     
-    // Test if images exist by trying to load them
+    // Test if images exist by trying to load them (test the -thumb variant)
     const validImages = [];
-    const testPromises = stockImageBasenames.map(async (basename) => {
+    const testPromises = manifestImages.map(async (imageData) => {
       try {
-        const thumbUrl = `${S3_BASE_URL}${basename}-thumb.png`;
-        const exists = await testImageExists(thumbUrl);
+        // Test the -thumb variant since all stock images have size suffixes
+        const imageUrl = `${S3_BASE_URL}${imageData.id}-thumb.${imageData.format}`;
+        const exists = await testImageExists(imageUrl);
         if (exists) {
-          validImages.push(basename);
-          console.log(`[STOCK-IMAGES] ✓ Found: ${basename}`);
+          validImages.push(imageData);
+          console.log(`[STOCK-IMAGES] ✓ Found: ${imageData.id}`);
         } else {
-          console.log(`[STOCK-IMAGES] ✗ Missing: ${basename}`);
+          console.log(`[STOCK-IMAGES] ✗ Missing: ${imageData.id}`);
         }
       } catch (error) {
-        console.log(`[STOCK-IMAGES] ✗ Error testing ${basename}:`, error.message);
+        console.log(`[STOCK-IMAGES] ✗ Error testing ${imageData.id}:`, error.message);
       }
     });
     
     // Wait for all tests to complete
     await Promise.all(testPromises);
     
-    console.log(`[STOCK-IMAGES] Found ${validImages.length} valid stock images out of ${stockImageBasenames.length} tested`);
-    return validImages.sort(); // Sort alphabetically
+    console.log(`[STOCK-IMAGES] Found ${validImages.length} valid stock images out of ${manifestImages.length} in manifest`);
+    
+    // Sort by name
+    return validImages.sort((a, b) => a.name.localeCompare(b.name));
     
   } catch (error) {
     console.error('[STOCK-IMAGES] Error fetching stock images:', error);
@@ -70,44 +72,62 @@ async function fetchStockImagesList() {
  */
 function testImageExists(url) {
   return new Promise((resolve) => {
+    const startTime = Date.now();
     const img = new Image();
+    
+    // Enable CORS for cross-origin images
+    img.crossOrigin = 'anonymous';
+    
     img.onload = () => {
-      console.log(`[STOCK-IMAGES] ✓ Image found: ${url}`);
+      const loadTime = Date.now() - startTime;
+      console.log(`[STOCK-IMAGES] ✓ Image loaded successfully (${loadTime}ms): ${url}`);
       resolve(true);
     };
-    img.onerror = () => {
-      console.log(`[STOCK-IMAGES] ✗ Image not found: ${url}`);
+    
+    img.onerror = (error) => {
+      console.log(`[STOCK-IMAGES] ✗ Image failed to load: ${url}`);
+      console.log(`[STOCK-IMAGES]   Error type: ${error.type || 'Unknown'}`);
       resolve(false);
     };
+    
+    console.log(`[STOCK-IMAGES] Testing URL: ${url}`);
     img.src = url;
     
     // Timeout after 5 seconds
     setTimeout(() => {
-      console.log(`[STOCK-IMAGES] ⏱️ Timeout testing: ${url}`);
+      console.log(`[STOCK-IMAGES] ⏱️ Timeout (5s) testing: ${url}`);
       resolve(false);
     }, 5000);
   });
 }
 
 /**
- * Generate URLs for all three image sizes
- * @param {string} basename - Base image name (e.g., 'zzz-default-sunset')
+ * Generate URLs for the stock image
+ * Stock images on CDN have size variants: -full, -small, -thumb
+ * @param {Object} imageData - Image data from manifest
  * @returns {Object} URLs for full, small, and thumb versions
  */
-function generateImageUrls(basename) {
+function generateImageUrls(imageData) {
+  const baseUrl = `${S3_BASE_URL}${imageData.id}`;
+  
   return {
-    full: `${S3_BASE_URL}${basename}-full.png`,
-    small: `${S3_BASE_URL}${basename}-small.png`,
-    thumb: `${S3_BASE_URL}${basename}-thumb.png`
+    full: `${baseUrl}-full.${imageData.format}`,
+    small: `${baseUrl}-small.${imageData.format}`,
+    thumb: `${baseUrl}-thumb.${imageData.format}`
   };
 }
 
 /**
  * Copy all image URLs to the current event form
- * @param {string} basename - Base image name
+ * @param {Object} imageData - Image data from manifest (can be string for backward compatibility)
  */
-function copyAllImageUrls(basename) {
-  console.log('[STOCK-IMAGES] Copying all URLs for:', basename);
+function copyAllImageUrls(imageData) {
+  // Handle both old string format and new object format
+  const imageObj = typeof imageData === 'string' 
+    ? { id: imageData, format: 'jpg' } 
+    : imageData;
+    
+  console.log('[STOCK-IMAGES] Copying all URLs for:', imageObj.id);
   
   // Check if an event is currently selected
   const currentEventId = document.getElementById('id')?.value;
@@ -116,7 +136,7 @@ function copyAllImageUrls(basename) {
     return;
   }
   
-  const urls = generateImageUrls(basename);
+  const urls = generateImageUrls(imageObj);
   
   // Populate form fields
   const fullImageField = document.getElementById('full_image_url');
@@ -135,7 +155,8 @@ function copyAllImageUrls(basename) {
   }
   
   // Show success message
-  showStockImageMessage(`✅ Applied stock images: ${basename.replace('zzz-default-', '')}`, 'success');
+  const displayName = imageObj.name || imageObj.id.replace('zzz-', '').replace(/-/g, ' ');
+  showStockImageMessage(`✅ Applied stock image: ${displayName}`, 'success');
   
   console.log('[STOCK-IMAGES] URLs copied:', urls);
 }
@@ -180,33 +201,36 @@ function showStockImageMessage(message, type = 'info') {
 
 /**
  * Render the stock images list
- * @param {string[]} imageBasenames - Array of image base names
+ * @param {Array} imageDataArray - Array of image data objects from manifest
  */
-function renderStockImages(imageBasenames) {
+function renderStockImages(imageDataArray) {
   const container = document.getElementById('stockImagesList');
   if (!container) return;
   
-  if (imageBasenames.length === 0) {
+  if (imageDataArray.length === 0) {
     container.innerHTML = '<div class="error-message">No stock images found</div>';
     return;
   }
   
-  container.innerHTML = imageBasenames.map(basename => {
-    const displayName = basename.replace('zzz-default-', '').replace(/-/g, ' ');
-    const thumbUrl = generateImageUrls(basename).thumb;
+  container.innerHTML = imageDataArray.map(imageData => {
+    const displayName = imageData.name;
+    // Use the -thumb variant for display in the list
+    const imageUrl = `${S3_BASE_URL}${imageData.id}-thumb.${imageData.format}`;
+    // Pass the entire imageData object as JSON string
+    const imageDataJson = JSON.stringify(imageData).replace(/"/g, '&quot;');
     
     return `
       <div class="stock-image-item">
-        <img src="${thumbUrl}" alt="${displayName}" loading="lazy" />
+        <img src="${imageUrl}" alt="${displayName}" loading="lazy" />
         <div class="stock-image-name">${displayName}</div>
-        <button class="copy-all-btn" onclick="window.stockImages.copyAllImageUrls('${basename}')">
+        <button class="copy-all-btn" onclick='window.stockImages.copyAllImageUrls(${imageDataJson})'>
           📋 Copy All
         </button>
       </div>
     `;
   }).join('');
   
-  console.log(`[STOCK-IMAGES] Rendered ${imageBasenames.length} stock images in vertical list`);
+  console.log(`[STOCK-IMAGES] Rendered ${imageDataArray.length} stock images in vertical list`);
 }
 
 /**
@@ -216,17 +240,17 @@ export async function initializeStockImages() {
   console.log('[STOCK-IMAGES] Initializing stock images...');
   
   try {
-    const imageBasenames = await fetchStockImagesList();
+    const imageDataArray = await fetchStockImagesList();
     
-    if (imageBasenames.length > 0) {
-      renderStockImages(imageBasenames);
+    if (imageDataArray.length > 0) {
+      renderStockImages(imageDataArray);
     } else {
       // Show demo/placeholder images for testing if no real stock images found
       console.log('[STOCK-IMAGES] No real stock images found, showing demo placeholders');
       const demoImages = [
-        'zzz-default-demo-sunset',
-        'zzz-default-demo-ocean',
-        'zzz-default-demo-mountain'
+        { id: 'zzz-demo-sunset', name: 'Demo Sunset', category: 'demo', format: 'jpg' },
+        { id: 'zzz-demo-ocean', name: 'Demo Ocean', category: 'demo', format: 'jpg' },
+        { id: 'zzz-demo-mountain', name: 'Demo Mountain', category: 'demo', format: 'jpg' }
       ];
       renderDemoStockImages(demoImages);
     }
@@ -234,36 +258,42 @@ export async function initializeStockImages() {
     console.error('[STOCK-IMAGES] Failed to initialize:', error);
     const container = document.getElementById('stockImagesList');
     if (container) {
-      container.innerHTML = '<div class="error-message">Failed to load stock images</div>';
+      container.innerHTML = `
+        <div class="error-message">
+          Failed to load stock images<br>
+          <small>${error.message}</small>
+        </div>
+      `;
     }
   }
 }
 
 /**
  * Render demo stock images for testing when real images aren't available
- * @param {string[]} demoNames - Array of demo image names
+ * @param {Array} demoData - Array of demo image data
  */
-function renderDemoStockImages(demoNames) {
+function renderDemoStockImages(demoData) {
   const container = document.getElementById('stockImagesList');
   if (!container) return;
   
-  container.innerHTML = demoNames.map(basename => {
-    const displayName = basename.replace('zzz-default-demo-', '').replace(/-/g, ' ');
+  container.innerHTML = demoData.map(imageData => {
+    const displayName = imageData.name;
     // Use a placeholder image service for demo
     const placeholderUrl = `https://via.placeholder.com/50x50/667eea/ffffff?text=${displayName.charAt(0)}`;
+    const imageDataJson = JSON.stringify(imageData).replace(/"/g, '&quot;');
     
     return `
       <div class="stock-image-item">
         <img src="${placeholderUrl}" alt="${displayName}" loading="lazy" />
         <div class="stock-image-name">${displayName} (Demo)</div>
-        <button class="copy-all-btn" onclick="window.stockImages.copyAllImageUrls('${basename}')">
+        <button class="copy-all-btn" onclick='window.stockImages.copyAllImageUrls(${imageDataJson})'>
           📋 Copy All
         </button>
       </div>
     `;
   }).join('');
   
-  console.log(`[STOCK-IMAGES] Rendered ${demoNames.length} demo stock images in vertical list`);
+  console.log(`[STOCK-IMAGES] Rendered ${demoData.length} demo stock images in vertical list`);
 }
 
 // Export functions for global access

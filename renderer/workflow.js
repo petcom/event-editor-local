@@ -97,7 +97,14 @@ class WorkflowManager {
     const step = this.steps.step3;
     const status = document.getElementById('step3Status');
     
-    if (this.currentEvent && this.hasLocalImages()) {
+    // If stock/URL images already exist, gray out this step (not needed)
+    if (this.currentEvent && this.hasS3Images() && !this.hasLocalImages()) {
+      step.completed = true; // Mark as completed for workflow progression
+      step.element.classList.add('disabled'); // But visually show as disabled/skipped
+      step.element.classList.remove('active', 'completed');
+      status.textContent = 'Stock images used (step skipped)';
+      status.className = 'step-status';
+    } else if (this.currentEvent && this.hasLocalImages()) {
       step.completed = true;
       step.element.classList.add('completed');
       step.element.classList.remove('active', 'disabled');
@@ -107,7 +114,7 @@ class WorkflowManager {
       step.completed = false;
       step.element.classList.remove('completed', 'disabled');
       step.element.classList.add('active');
-      status.textContent = 'Add images to your event';
+      status.textContent = 'Add images to your event (local or stock)';
       status.className = 'step-status';
     } else {
       step.completed = false;
@@ -122,13 +129,29 @@ class WorkflowManager {
     const step = this.steps.step4;
     const status = document.getElementById('step4Status');
     
-    if (this.currentEvent && this.currentEvent.images_uploaded_to_s3) {
+    // If images are already URLs (stock images), gray out this step (not needed)
+    if (this.currentEvent && this.hasS3Images() && !this.hasLocalImages()) {
+      step.completed = true; // Mark as completed for workflow progression
+      step.element.classList.add('disabled'); // But visually show as disabled/skipped
+      step.element.classList.remove('active', 'completed');
+      status.textContent = 'Stock images already on CDN (step skipped)';
+      status.className = 'step-status';
+      
+      // Auto-check the "images uploaded to S3" checkbox for stock images
+      if (this.currentEvent && !this.currentEvent.images_uploaded_to_s3) {
+        this.currentEvent.images_uploaded_to_s3 = true;
+        const checkbox = document.getElementById('images_uploaded_to_s3');
+        if (checkbox && !checkbox.checked) {
+          checkbox.checked = true;
+        }
+      }
+    } else if (this.currentEvent && this.currentEvent.images_uploaded_to_s3) {
       step.completed = true;
       step.element.classList.add('completed');
       step.element.classList.remove('active', 'disabled');
       status.textContent = 'Images uploaded to S3';
       status.className = 'step-status success';
-    } else if (this.steps.step3.completed) {
+    } else if (this.steps.step3.completed && this.hasLocalImages()) {
       step.completed = false;
       step.element.classList.remove('completed', 'disabled');
       step.element.classList.add('active');
@@ -138,7 +161,7 @@ class WorkflowManager {
       step.completed = false;
       step.element.classList.remove('completed', 'active');
       step.element.classList.add('disabled');
-      status.textContent = 'Complete step 3 first';
+      status.textContent = 'Add images first';
       status.className = 'step-status';
     }
   }
@@ -148,7 +171,13 @@ class WorkflowManager {
     const status = document.getElementById('step5Status');
     
     if (this.authToken) {
-      if (this.steps.step4.completed) {
+      // Enable Step 5 if:
+      // 1. Step 4 is completed (images uploaded checkbox is checked), OR
+      // 2. Event has stock images (S3 URLs) and is saved
+      const hasStockImages = this.currentEvent && this.hasS3Images() && !this.hasLocalImages();
+      const isReady = this.steps.step4.completed || (hasStockImages && this.currentEvent.images_uploaded_to_s3);
+      
+      if (isReady) {
         step.completed = false;
         step.element.classList.remove('completed', 'disabled');
         step.element.classList.add('active');
@@ -158,7 +187,12 @@ class WorkflowManager {
         step.completed = false;
         step.element.classList.remove('completed', 'active');
         step.element.classList.add('disabled');
-        status.textContent = 'Complete step 4 first';
+        
+        if (hasStockImages) {
+          status.textContent = 'Save event first';
+        } else {
+          status.textContent = 'Complete previous steps first';
+        }
         status.className = 'step-status';
       }
     } else {

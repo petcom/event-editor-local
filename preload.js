@@ -31,6 +31,9 @@ contextBridge.exposeInMainWorld('api', {
   // File operations
   checkFileExists: (filePath) => ipcRenderer.invoke('check-file-exists', filePath),
 
+  // Stock images
+  loadStockImagesManifest: () => ipcRenderer.invoke('load-stock-images-manifest'),
+
   // Logging
   appendToLogFile: (filename, content) => ipcRenderer.invoke('append-to-log-file', filename, content),
 });
